@@ -1,4 +1,4 @@
-package booking_bot.Configs;
+package booking_bot.configs;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
@@ -30,6 +30,7 @@ public class DataBaseConfig {
         hikariConfig.setUsername(username);
         hikariConfig.setPassword(password);
         hikariConfig.setDriverClassName(driverName);
+//        hikariConfig.setMaximumPoolSize(10);
         return new HikariDataSource(hikariConfig);
     }
 

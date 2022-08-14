@@ -1,12 +1,15 @@
-package booking_bot.Configs;
+package booking_bot.configs;
 
 import booking_bot.Bot;
 import booking_bot.Handler;
-import booking_bot.Repositories.ClientsRepository;
-import booking_bot.Repositories.Repository;
-import booking_bot.Repositories.SlotsRepository;
+import booking_bot.commands.CommandContainer;
+import booking_bot.repositories.ClientsRepository;
+import booking_bot.repositories.Repository;
+import booking_bot.repositories.SlotsRepository;
 import booking_bot.models.Client;
 import booking_bot.models.Slot;
+import booking_bot.services.SendMessageService;
+import booking_bot.services.SendMessageServiceImpl;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -35,13 +38,26 @@ public class BotConfig {
     }
 
     @Bean
-    public Handler handler(Repository<Slot> slotsRepository) {
-        return new Handler(slotsRepository);
+    Bot bot() {
+        return new Bot(username, token);
     }
 
     @Bean
-    Bot bot(Handler handler) {
-        return new Bot(username, token, handler);
+    public SendMessageService sendMessageService (Bot bot) {
+        return new SendMessageServiceImpl(bot);
     }
+
+    @Bean
+    public CommandContainer commandContainer (SendMessageService sendMessageService,
+                                              Repository<Slot> slotRepository) {
+        return new CommandContainer(sendMessageService, slotRepository);
+    }
+
+//    @Bean
+//    public Handler handler(Repository<Slot> slotsRepository) {
+//        return new Handler(slotsRepository);
+//    }
+
+
 
 }

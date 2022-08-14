@@ -1,17 +1,17 @@
 package booking_bot.models;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
-public class Slot {
-    private final Date date;
+public class Slot implements Comparable {
+    private final LocalDateTime date;
     private Client client;
 
-    public Slot(Date date) {
+    public Slot(LocalDateTime date) {
         this.date = date;
         this.client = null;
     }
 
-    public Date getDate() {
+    public LocalDateTime getDate() {
         return date;
     }
 
@@ -21,5 +21,12 @@ public class Slot {
 
     public void setClient(Client client) {
         this.client = client;
+    }
+
+
+    @Override
+    public int compareTo(Object o) {
+        Slot slot = (Slot) o;
+        return this.date.compareTo(slot.date);
     }
 }

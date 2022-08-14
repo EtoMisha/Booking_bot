@@ -1,6 +1,4 @@
-package booking_bot.Repositories;
-
-import booking_bot.models.Client;
+package booking_bot.repositories;
 
 import java.util.List;
 

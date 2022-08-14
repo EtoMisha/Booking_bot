@@ -1,39 +1,27 @@
 package booking_bot;
 
+import booking_bot.commands.Command;
+import booking_bot.commands.CommandContainer;
+import booking_bot.commands.CommandNames;
+import booking_bot.commands.Status;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.ForceReplyKeyboard;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
-import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Bot extends TelegramLongPollingBot {
 
     private final String USERNAME;
     private final String TOKEN;
-    private final Handler handler;
 
-    private final String newSlot = "Новый слот";
-    private final String removeSlot = "Удалить слот";
-    private final String show = "Посмотреть записи";
-    private final String setupSlots = "Настроить слоты";
-    private final String setupNotifications = "Настроить уведомления";
+    private CommandContainer commandContainer;
+    private final Map<Long, Status> statusMap;
 
-
-    private Status status;
-
-    private ReplyKeyboardMarkup replyKeyboard;
-
-    public Bot(String username, String token, Handler handler) {
+    public Bot(String username, String token) {
         this.USERNAME = username;
         this.TOKEN = token;
-        this.handler = handler;
-        initKeyboard();
-        status = Status.COMMON;
+        statusMap = new HashMap<>();
     }
 
     @Override
@@ -49,77 +37,65 @@ public class Bot extends TelegramLongPollingBot {
     @Override
     public void onUpdateReceived(Update update) {
 
+
+        Long chatId = update.getMessage().getChatId();
+        Status status = statusMap.get(chatId);
+        Status newStatus = status;
+        Command command;
+
         if (update.hasMessage() && update.getMessage().hasText()) {
-            String chatId = update.getMessage().getChatId().toString();
+            String message = update.getMessage().getText().trim();
+            System.out.println("bot: message: " + message);
+        }
+        if (update.hasCallbackQuery()) {
+            String callback = update.getCallbackQuery().getData();
+            System.out.println("bot: Callback data: " + callback);
+        }
+        
+
+        if (update.hasMessage() && update.getMessage().hasText()) {
             String message = update.getMessage().getText().trim();
 
-            if (status == Status.NEW_SLOT_DATE) {
-                sendMsg(chatId, handler.newSlotDate(message));
-                status = Status.NEW_SLOT_TIME;
 
-            } else if (status == Status.NEW_SLOT_TIME) {
-                sendMsg(chatId, handler.newSlotTime(message));
-                status = Status.COMMON;
-                System.out.println(status);
-            } else {
-                getCommonAnswer(chatId, message);
+
+
+            if (!statusMap.containsKey(chatId)) {
+                statusMap.put(chatId, Status.START);
+
             }
+
+            System.out.println("bot: id " + chatId + ", status " + statusMap.get(chatId));
+
+            if (commandContainer.hasCommand(message)) {
+                status = Status.START;
+                System.out.println("bot: get command: " + message);
+                command = commandContainer.getCommand(message);
+//                newStatus = execute(update);
+            } else if (status != Status.START) {
+//                System.out.println("bot: get command by status: " + status);
+                command = commandContainer.getCommandByStatus(status);
+            } else {
+                command = commandContainer.getCommand(CommandNames.UNKNOWN.getText());
+            }
+
+            command.setStatus(status);
+            newStatus = command.execute(update);
+
+
+        } else if (update.hasCallbackQuery()) {
+            System.out.println("bot: Callback start");
+            String message = update.getCallbackQuery().getData();
+
+            System.out.println("bot: Callback data: " + message);
+            command = commandContainer.getCommand(CommandNames.REMOVE_SLOT.getText());
+            command.setStatus(Status.REMOVE_SLOT);
+            newStatus = command.execute(update);
         }
 
+        statusMap.put(chatId, newStatus);
     }
 
-    void sendMsg(String chatId, String message) {
-        SendMessage send = new SendMessage();
-        send.setChatId(chatId);
-        send.setText(message);
-        ForceReplyKeyboard forceReplyKeyboard = new ForceReplyKeyboard(true);
-
-        send.setReplyMarkup(replyKeyboard);
-
-        try {
-            execute(send);
-        } catch (TelegramApiException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void getCommonAnswer(String chatId, String message) {
-        System.out.println("message: " + message);
-
-        switch (message) {
-            case ("/start"):
-                sendMsg(chatId, "Привет. Это админка бота");
-                break;
-            case (newSlot):
-                status = Status.NEW_SLOT_DATE;
-                sendMsg(chatId, "Введите дату в формате ДД.ММ.ГГГГ, например \"11.08.2022\"");
-                break;
-            default:
-                sendMsg(chatId, "Неизвестная команда");
-                break;
-        }
-    }
-
-    void initKeyboard() {
-        KeyboardRow keyboardRow1 = new KeyboardRow();
-        keyboardRow1.add(newSlot);
-        keyboardRow1.add(removeSlot);
-        keyboardRow1.add(show);
-
-        KeyboardRow keyboardRow2 = new KeyboardRow();
-        keyboardRow2.add(setupSlots);
-        keyboardRow2.add(setupNotifications);
-
-        ArrayList<KeyboardRow> keyBoardRows = new ArrayList<>();
-        keyBoardRows.add(keyboardRow1);
-        keyBoardRows.add(keyboardRow2);
-
-        replyKeyboard = new ReplyKeyboardMarkup();
-        replyKeyboard.setKeyboard(keyBoardRows);
-        replyKeyboard.setResizeKeyboard(true);
-    }
-
-    enum Status {
-        COMMON, NEW_SLOT_DATE, NEW_SLOT_TIME, REMOVE_SLOT, SETUP_SLOT, SETUP_NOTIF
+    public void setCommandContainer(CommandContainer commandContainer) {
+        this.commandContainer = commandContainer;
     }
 }

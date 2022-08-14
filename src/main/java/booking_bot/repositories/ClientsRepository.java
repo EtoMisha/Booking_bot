@@ -1,6 +1,5 @@
-package booking_bot.Repositories;
+package booking_bot.repositories;
 
-import booking_bot.Repositories.Repository;
 import booking_bot.models.Client;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;

@@ -1,13 +1,9 @@
 package booking_bot;
 
-import booking_bot.Repositories.Repository;
+import booking_bot.repositories.Repository;
 import booking_bot.models.Slot;
 import org.springframework.dao.DataAccessException;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.time.DateTimeException;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -17,7 +13,7 @@ public class Handler {
 
     private final Repository<Slot> repository;
 
-    private Date date;
+    private LocalDateTime date;
     private LocalDateTime localDateTime;
     private Calendar calendar;
 
