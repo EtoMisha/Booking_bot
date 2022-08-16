@@ -1,9 +1,7 @@
 package booking_bot.services;
 
 import booking_bot.Bot;
-import booking_bot.commands.CommandNames;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.ForceReplyKeyboard;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
@@ -25,29 +23,7 @@ public class SendMessageServiceImpl implements SendMessageService {
         send.setText(message);
         send.setReplyMarkup(initKeyboard());
 
-        send.enableMarkdown(true);
-
-        try {
-            bot.execute(send);
-        } catch (TelegramApiException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Override
-    public void sendWithButton(Long chatId, String message, String button) {
-        KeyboardRow keyboardRow1 = new KeyboardRow();
-        keyboardRow1.add(button);
-        ArrayList<KeyboardRow> keyBoardRows = new ArrayList<>();
-        keyBoardRows.add(keyboardRow1);
-        ReplyKeyboardMarkup replyKeyboard = new ReplyKeyboardMarkup();
-        replyKeyboard.setKeyboard(keyBoardRows);
-        replyKeyboard.setResizeKeyboard(true);
-
-        SendMessage send = new SendMessage();
-        send.setChatId(chatId.toString());
-        send.setText(message);
-        send.setReplyMarkup(replyKeyboard);
+//        send.enableMarkdown(true);
 
         try {
             bot.execute(send);
@@ -67,13 +43,12 @@ public class SendMessageServiceImpl implements SendMessageService {
 
     ReplyKeyboardMarkup initKeyboard() {
         KeyboardRow keyboardRow1 = new KeyboardRow();
-        keyboardRow1.add(CommandNames.NEW_SLOT.getText());
-        keyboardRow1.add(CommandNames.REMOVE_SLOT.getText());
-        keyboardRow1.add(CommandNames.SHOW_SLOTS.getText());
+        keyboardRow1.add("/start");
+        keyboardRow1.add("тест");
 
         KeyboardRow keyboardRow2 = new KeyboardRow();
-        keyboardRow2.add(CommandNames.SETUP_SLOTS.getText());
-        keyboardRow2.add(CommandNames.SETUP_NOTIFICATIONS.getText());
+        keyboardRow2.add("Кнопка 3");
+        keyboardRow2.add("Кнопка 4");
 
         ArrayList<KeyboardRow> keyBoardRows = new ArrayList<>();
         keyBoardRows.add(keyboardRow1);

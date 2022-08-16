@@ -1,12 +1,13 @@
 package booking_bot.configs;
 
 import booking_bot.Bot;
-import booking_bot.Handler;
+import booking_bot.commands.Command;
 import booking_bot.commands.CommandContainer;
-import booking_bot.repositories.ClientsRepository;
+import booking_bot.commands.StartCommand;
+import booking_bot.commands.TestCommand;
 import booking_bot.repositories.Repository;
 import booking_bot.repositories.SlotsRepository;
-import booking_bot.models.Client;
+import booking_bot.models.User;
 import booking_bot.models.Slot;
 import booking_bot.services.SendMessageService;
 import booking_bot.services.SendMessageServiceImpl;
@@ -33,11 +34,6 @@ public class BotConfig {
     }
 
     @Bean
-    public Repository<Client> clientsRepository (DataSource hikariDataSource) {
-        return new ClientsRepository(hikariDataSource);
-    }
-
-    @Bean
     Bot bot() {
         return new Bot(username, token);
     }
@@ -51,6 +47,16 @@ public class BotConfig {
     public CommandContainer commandContainer (SendMessageService sendMessageService,
                                               Repository<Slot> slotRepository) {
         return new CommandContainer(sendMessageService, slotRepository);
+    }
+
+    @Bean
+    public Command testCommand(SendMessageService sendMessageService, Repository slotsRepository, CommandContainer commandContainer) {
+        return new TestCommand(sendMessageService, slotsRepository, commandContainer);
+    }
+
+    @Bean
+    public Command startCommand(SendMessageService sendMessageService, Repository slotsRepository, CommandContainer commandContainer) {
+        return new StartCommand(sendMessageService, slotsRepository, commandContainer);
     }
 
 //    @Bean
