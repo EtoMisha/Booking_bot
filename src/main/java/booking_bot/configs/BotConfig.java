@@ -29,8 +29,9 @@ public class BotConfig {
     private String token;
 
     @Bean
-    public Repository<Slot> slotsRepository (DataSource hikariDataSource) {
-        return new SlotsRepository(hikariDataSource);
+    public Repository<Slot> slotsRepository () {
+//        return new SlotsRepository(hikariDataSource);
+        return null;
     }
 
     @Bean

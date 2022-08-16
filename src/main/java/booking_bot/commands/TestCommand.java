@@ -32,11 +32,11 @@ public class TestCommand extends CommandParent {
             status = "begin";
             statusMap.put(chatId, status);
         }
-        System.out.println("- test: begin");
 
 
 
         if (status.equals("begin")) {
+            isFinished = false;
             sendMessageService.send(chatId, "Введите имя пользователя");
 
 

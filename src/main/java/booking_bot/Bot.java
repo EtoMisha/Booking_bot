@@ -38,7 +38,7 @@ public class Bot extends TelegramLongPollingBot {
         Long chatId = update.getMessage().getChatId();
         String input = update.getMessage().getText();
 
-        System.out.println("----\nbot: text: " + input);
+        System.out.println("----\nbot: text: " + input + " id " + chatId);
 
 //        if (!commandMap.containsKey(chatId)) {
 //            commandMap.put(chatId, "/start");
@@ -51,12 +51,11 @@ public class Bot extends TelegramLongPollingBot {
 
             command = commandContainer.getCommand(input);
             commandMap.put(chatId, command.getCommandName());
+
             isFinished = command.execute(update, true);
-            System.out.println("bot: command from container: " + command.getCommandName() + " true");
         } else {
-            command = commandContainer.getCommand(commandFromMap);
+            command = commandContainer.getCommand(commandMap.get(chatId));
             isFinished = command.execute(update, false);
-            System.out.println("bot: command from map: " + command.getCommandName() + "false");
         }
 
         if (isFinished) {

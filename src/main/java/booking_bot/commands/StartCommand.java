@@ -28,7 +28,6 @@ public class StartCommand extends CommandParent {
             status = "begin";
             statusMap.put(chatId, status);
         }
-        System.out.println("- start: begin");
 
 
         if (status.equals("begin")) {
@@ -41,7 +40,6 @@ public class StartCommand extends CommandParent {
             isFinished = true;
         }
 
-        System.out.println("- start: end");
         return isFinished;
     }
 
