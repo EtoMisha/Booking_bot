@@ -1,7 +1,7 @@
 package booking_bot.models;
 
 public class BookObject {
-    private final int id;
+    private int id;
     private String category;
     private String name;
     private String description;
@@ -10,9 +10,9 @@ public class BookObject {
     private int floor;
     private int room_number;
 
-    public BookObject(int id) {
-        this.id = id;
-    }
+//    public BookObject(int id) {
+//        this.id = id;
+//    }
 
     public int getId() {
         return id;

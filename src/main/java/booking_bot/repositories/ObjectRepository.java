@@ -14,7 +14,7 @@ public class ObjectRepository implements Repository<Booking> {
 
     private final JdbcTemplate jdbcTemplate;
     private final RowMapper<BookObject> ROW_MAPPER = (ResultSet resultSet, int rowNum) -> {
-        BookObject bookObject = new BookObject(resultSet.getInt("id"));
+        BookObject bookObject = new BookObject();
         //сеттеры
         return bookObject;
     };

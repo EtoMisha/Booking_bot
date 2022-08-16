@@ -3,6 +3,7 @@ package booking_bot.commands;
 import booking_bot.models.Booking;
 import booking_bot.repositories.Repository;
 import booking_bot.services.SendMessageService;
+import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -13,4 +13,9 @@
       <module name="Booking_bot" target="1.8" />
     </bytecodeTargetLevel>
   </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="Booking_bot" options="" />
+    </option>
+  </component>
 </project>
