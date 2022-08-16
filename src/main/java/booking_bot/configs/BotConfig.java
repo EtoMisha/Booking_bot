@@ -22,10 +22,10 @@ import javax.sql.DataSource;
 @PropertySource("classpath:bot.properties")
 public class BotConfig {
 
-    @Value("${admin.username}")
+    @Value("${bot.username}")
     private String username;
 
-    @Value("${admin.token}")
+    @Value("${bot.token}")
     private String token;
 
     @Bean
