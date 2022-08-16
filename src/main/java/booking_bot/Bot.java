@@ -35,17 +35,20 @@ public class Bot extends TelegramLongPollingBot {
     @Override
     public void onUpdateReceived(Update update) {
 
-        Long chatId = update.getMessage().getChatId();
-        String input = update.getMessage().getText();
+        Long chatId;
+        String input;
 
-        System.out.println("----\nbot: text: " + input + " id " + chatId);
+        if (update.hasCallbackQuery()) {
+            chatId = update.getCallbackQuery().getMessage().getChatId();
+            input = update.getCallbackQuery().getData();
+        } else {
+            chatId = update.getMessage().getChatId();
+            input = update.getMessage().getText();
+        }
 
-//        if (!commandMap.containsKey(chatId)) {
-//            commandMap.put(chatId, "/start");
-//        }
+        System.out.println("----\nbot: text: " + input + " id " + chatId + " callback " + update.hasCallbackQuery());
 
         Command command;
-        String commandFromMap = commandMap.get(chatId);
         boolean isFinished;
         if (commandContainer.hasCommand(input)) {
 
@@ -54,6 +57,8 @@ public class Bot extends TelegramLongPollingBot {
 
             isFinished = command.execute(update, true);
         } else {
+            System.out.println("bot: command from map");
+            System.out.println(commandContainer.getCommand(commandMap.get(chatId)).getCommandName());
             command = commandContainer.getCommand(commandMap.get(chatId));
             isFinished = command.execute(update, false);
         }
@@ -61,7 +66,6 @@ public class Bot extends TelegramLongPollingBot {
         if (isFinished) {
             commandMap.remove(chatId);
         }
-
 
     }
 

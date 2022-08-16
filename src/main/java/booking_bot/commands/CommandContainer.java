@@ -1,9 +1,8 @@
 package booking_bot.commands;
 
-import booking_bot.models.Slot;
+import booking_bot.models.Booking;
 import booking_bot.repositories.Repository;
 import booking_bot.services.SendMessageService;
-import org.telegram.telegrambots.meta.api.objects.Update;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -11,7 +10,7 @@ import java.util.Map;
 public class CommandContainer {
     private final Map<String, Command> commandMap;
 
-    public CommandContainer (SendMessageService sendMessageService, Repository<Slot> slotRepository) {
+    public CommandContainer (SendMessageService sendMessageService, Repository<Booking> slotRepository) {
         commandMap = new HashMap<>();
     }
 

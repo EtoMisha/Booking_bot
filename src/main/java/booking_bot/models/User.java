@@ -1,17 +1,18 @@
 package booking_bot.models;
 
 public class User {
-    private final Integer id;
-    private final String name;
-    private final String email;
+    private final int id;
+    private String name;
+    private String login;
+    private String role;
+    private String campus;
 
-    public User(Integer id, String name, String login) {
+
+    public User(Integer id) {
         this.id = id;
-        this.name = name;
-        this.email = login;
     }
 
-    public Integer getId() {
+    public int getId() {
         return id;
     }
 
@@ -19,7 +20,31 @@ public class User {
         return name;
     }
 
-    public String getEmail() {
-        return email;
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getLogin() {
+        return login;
+    }
+
+    public void setLogin(String login) {
+        this.login = login;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
+    public String getCampus() {
+        return campus;
+    }
+
+    public void setCampus(String campus) {
+        this.campus = campus;
     }
 }

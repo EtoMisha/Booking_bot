@@ -6,9 +6,7 @@ import booking_bot.commands.CommandContainer;
 import booking_bot.commands.StartCommand;
 import booking_bot.commands.TestCommand;
 import booking_bot.repositories.Repository;
-import booking_bot.repositories.SlotsRepository;
-import booking_bot.models.User;
-import booking_bot.models.Slot;
+import booking_bot.models.Booking;
 import booking_bot.services.SendMessageService;
 import booking_bot.services.SendMessageServiceImpl;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,20 +14,18 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 
-import javax.sql.DataSource;
-
 @Configuration
 @PropertySource("classpath:bot.properties")
 public class BotConfig {
 
-    @Value("${bot.username}")
+    @Value("${test.username}")
     private String username;
 
-    @Value("${bot.token}")
+    @Value("${test.token}")
     private String token;
 
     @Bean
-    public Repository<Slot> slotsRepository () {
+    public Repository<Booking> slotsRepository () {
 //        return new SlotsRepository(hikariDataSource);
         return null;
     }
@@ -46,7 +42,7 @@ public class BotConfig {
 
     @Bean
     public CommandContainer commandContainer (SendMessageService sendMessageService,
-                                              Repository<Slot> slotRepository) {
+                                              Repository<Booking> slotRepository) {
         return new CommandContainer(sendMessageService, slotRepository);
     }
 

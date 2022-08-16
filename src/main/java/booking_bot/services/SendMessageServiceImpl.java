@@ -2,11 +2,14 @@ package booking_bot.services;
 
 import booking_bot.Bot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class SendMessageServiceImpl implements SendMessageService {
 
@@ -21,9 +24,7 @@ public class SendMessageServiceImpl implements SendMessageService {
         SendMessage send = new SendMessage();
         send.setChatId(chatId.toString());
         send.setText(message);
-        send.setReplyMarkup(initKeyboard());
-
-//        send.enableMarkdown(true);
+        send.setReplyMarkup(replyKeyboard());
 
         try {
             bot.execute(send);
@@ -33,7 +34,12 @@ public class SendMessageServiceImpl implements SendMessageService {
     }
 
     @Override
-    public void sendCustom(SendMessage send) {
+    public void sendWithKeyboard(Long chatId, String message, List<String> buttons) {
+        SendMessage send = new SendMessage();
+        send.setChatId(chatId.toString());
+        send.setText(message);
+        send.setReplyMarkup(inlineKeyboard(buttons));
+
         try {
             bot.execute(send);
         } catch (TelegramApiException e) {
@@ -41,14 +47,14 @@ public class SendMessageServiceImpl implements SendMessageService {
         }
     }
 
-    ReplyKeyboardMarkup initKeyboard() {
+    private ReplyKeyboardMarkup replyKeyboard() {
         KeyboardRow keyboardRow1 = new KeyboardRow();
-        keyboardRow1.add("/start");
-        keyboardRow1.add("тест");
+        keyboardRow1.add("Забронировать");
+        keyboardRow1.add("Отмена бронирования");
 
         KeyboardRow keyboardRow2 = new KeyboardRow();
-        keyboardRow2.add("Кнопка 3");
-        keyboardRow2.add("Кнопка 4");
+        keyboardRow2.add("Редактировать каталог");
+        keyboardRow2.add("Редактировать пользователей");
 
         ArrayList<KeyboardRow> keyBoardRows = new ArrayList<>();
         keyBoardRows.add(keyboardRow1);
@@ -59,5 +65,23 @@ public class SendMessageServiceImpl implements SendMessageService {
         replyKeyboard.setResizeKeyboard(true);
 
         return replyKeyboard;
+    }
+
+    private InlineKeyboardMarkup inlineKeyboard(List<String> buttonsList) {
+
+        InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
+        List<List<InlineKeyboardButton>> totalList = new ArrayList<>();
+
+        for (String buttonText : buttonsList) {
+            List<InlineKeyboardButton> keyboardButtonRow = new ArrayList<>();
+
+            InlineKeyboardButton button = new InlineKeyboardButton(buttonText);
+            button.setCallbackData(buttonText);
+            keyboardButtonRow.add(button);
+            totalList.add(keyboardButtonRow);
+        }
+        inlineKeyboardMarkup.setKeyboard(totalList);
+
+        return inlineKeyboardMarkup;
     }
 }
