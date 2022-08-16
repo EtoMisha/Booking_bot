@@ -10,12 +10,18 @@ import javax.sql.DataSource;
 import java.sql.ResultSet;
 import java.util.List;
 
-public class ObjectRepository implements Repository<Booking> {
+public class ObjectRepository implements Repository<BookObject> {
 
     private final JdbcTemplate jdbcTemplate;
     private final RowMapper<BookObject> ROW_MAPPER = (ResultSet resultSet, int rowNum) -> {
-        BookObject bookObject = new BookObject(resultSet.getInt("id"));
-        //сеттеры
+        BookObject bookObject = new BookObject();
+        bookObject.setId(resultSet.getInt("id"));
+        bookObject.setCategory(resultSet.getString("category"));
+        bookObject.setName(resultSet.getString("name"));
+        bookObject.setDescription(resultSet.getString("description"));
+        bookObject.setImage(resultSet.getString("image"));
+        bookObject.setCampus(resultSet.getString("campus"));
+
         return bookObject;
     };
 
@@ -24,28 +30,29 @@ public class ObjectRepository implements Repository<Booking> {
     }
 
     @Override
-    public List<Booking> findAll() throws DataAccessException {
-//        return jdbcTemplate.query("SELECT * FROM slots;", ROW_MAPPER);
-        return null;
+    public List<BookObject> findAll() throws DataAccessException {
+        return jdbcTemplate.query("SELECT * FROM booking_objects;", ROW_MAPPER);
     }
 
     @Override
-    public void save(Booking entity) throws DataAccessException {
-//        String query = String.format("INSERT into slots (time) VALUES ('%s');",
-//                entity.getStart(), entity.getEnd());
-//        jdbcTemplate.update(query);
+    public void save(BookObject entity) throws DataAccessException {
+        String query = String.format("INSERT into booking_objects (type_id) VALUES ('%s');",
+                entity.getId(), entity.getCategory(), entity.getName(),
+                entity.getDescription(), entity.getImage(), entity.getCampus());
+        jdbcTemplate.update(query);
     }
 
     @Override
-    public void update(Booking entity) throws DataAccessException{
-//        String query = String.format("UPDATE slots SET client = '%d' WHERE start = '%s';",
-//                ((Slot) entity).getClient().getId(), ((Slot) entity).getStart(), ((Slot) entity).getEnd());
-//        jdbcTemplate.update(query);
+    public void update(BookObject entity) throws DataAccessException {
+        String query = String.format("UPDATE booking_objects SET type_id = '%d' WHERE id = %d;",
+                entity.getCategory(), entity.getName(), entity.getDescription(),
+                entity.getImage(), entity.getCampus(), entity.getId());
+        jdbcTemplate.update(query);
     }
 
     @Override
-    public void delete(Object date) throws DataAccessException {
-//        String query = String.format("DELETE FROM slots WHERE time = '%s';", date);
-//        jdbcTemplate.update(query);
+    public void delete(int id) throws DataAccessException {
+        String query = String.format("DELETE FROM booking_objects WHERE id = %d;", id);
+        jdbcTemplate.update(query);
     }
 }
