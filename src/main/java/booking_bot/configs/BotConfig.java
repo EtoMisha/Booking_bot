@@ -1,10 +1,7 @@
 package booking_bot.configs;
 
 import booking_bot.Bot;
-import booking_bot.commands.Command;
-import booking_bot.commands.CommandContainer;
-import booking_bot.commands.StartCommand;
-import booking_bot.commands.TestCommand;
+import booking_bot.commands.*;
 import booking_bot.repositories.Repository;
 import booking_bot.models.Booking;
 import booking_bot.services.SendMessageService;
@@ -18,10 +15,10 @@ import org.springframework.context.annotation.PropertySource;
 @PropertySource("classpath:bot.properties")
 public class BotConfig {
 
-    @Value("${test.username}")
+    @Value("${bot.username}")
     private String username;
 
-    @Value("${test.token}")
+    @Value("${bot.token}")
     private String token;
 
     @Bean
@@ -49,6 +46,11 @@ public class BotConfig {
     @Bean
     public Command testCommand(SendMessageService sendMessageService, Repository slotsRepository, CommandContainer commandContainer) {
         return new TestCommand(sendMessageService, slotsRepository, commandContainer);
+    }
+
+    @Bean
+    public Command userRedact(SendMessageService sendMessageService, Repository slotsRepository, CommandContainer commandContainer) {
+        return new UserRedact(sendMessageService, slotsRepository, commandContainer);
     }
 
     @Bean
