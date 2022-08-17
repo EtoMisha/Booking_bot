@@ -21,10 +21,10 @@ public class BotConfig {
 //    @Autowired
 //    CommandContainer commandContainer;
 
-    @Value("${test.username}")
+    @Value("${bot.username}")
     private String username;
 
-    @Value("${test.token}")
+    @Value("${bot.token}")
     private String token;
 
     @Bean
@@ -63,6 +63,11 @@ public class BotConfig {
     @Bean
     public Command testCommand(SendMessageService sendMessageService, Repository slotsRepository, CommandContainer commandContainer) {
         return new TestCommand(sendMessageService, slotsRepository, commandContainer);
+    }
+
+    @Bean
+    public Command userRedact(SendMessageService sendMessageService, Repository slotsRepository, CommandContainer commandContainer) {
+        return new UserRedact(sendMessageService, slotsRepository, commandContainer);
     }
 
     @Bean
