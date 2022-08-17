@@ -53,7 +53,7 @@ public class BookObject extends CommandParent {
             send.setChatId(this.chatId.toString());
             send.setText("Выберите дату");
             send.setReplyMarkup(this.makeCalendar());
-            this.sendMessageService.sendCustom(send);
+//            this.sendMessageService.sendCustom(send);
             this.statusMap.put(this.chatId, "Запрос времени");
         } else if (this.status.equals("Запрос времени")) {
             this.sendMessageService.send(this.chatId, "С какого времени забронировать? Введите в формате ЧЧ.ММ\nНапример 12.30");

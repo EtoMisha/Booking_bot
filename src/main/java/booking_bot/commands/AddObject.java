@@ -70,6 +70,7 @@ public class AddObject extends CommandParent {
             statusMap.put(chatId, "Ввод объекта");
         } else if (status.equals("Ввод объекта")) {
             newObject.setName(input);
+            //TODO сохранить наименование объекта в базу
 
             sendMessageService.send(chatId, "Вы добавили " + input);
 
@@ -79,7 +80,7 @@ public class AddObject extends CommandParent {
 
         return isFinished;
     }
-    //TODO сохранить наименование объекта в базу
+
 
 
     @Override
