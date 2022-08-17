@@ -53,8 +53,10 @@ public class SendMessageServiceImpl implements SendMessageService {
         keyboardRow1.add("Отмена бронирования");
 
         KeyboardRow keyboardRow2 = new KeyboardRow();
-        keyboardRow2.add("Редактировать каталог");
-        keyboardRow2.add("Управление пользователем");
+        keyboardRow2.add("Добавить объект");
+//        keyboardRow2.add("Редактировать каталог");
+        keyboardRow2.add("Редактировать объект");
+        keyboardRow2.add("Редактировать пользователей");
 
         ArrayList<KeyboardRow> keyBoardRows = new ArrayList<>();
         keyBoardRows.add(keyboardRow1);

@@ -22,7 +22,7 @@ public class DataBaseConfig {
 
     @Value("${db.driver.name}")
     private String driverName;
-
+//
 //    @Bean
 //    public HikariDataSource hikariDataSource() {
 //        HikariConfig hikariConfig = new HikariConfig();
