@@ -8,4 +8,7 @@ import java.util.List;
 public interface SendMessageService {
     void send(Long chatId, String message);
     void sendWithKeyboard(Long chatId, String message, List<String> buttons);
+
+    void sendCustom(SendMessage send);
+
 }

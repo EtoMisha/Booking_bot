@@ -18,7 +18,7 @@ public class UserRedact extends CommandParent {
         super(sendMessageService, repository, commandContainer);
         this.commandName = "Редактировать пользователей";
         commandContainer.add(commandName, this);
-        userTmp = new User(0); // ID ???
+        userTmp = new User(); // ID ???
         flagRedact = false;
     }
 
