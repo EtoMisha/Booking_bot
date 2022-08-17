@@ -4,11 +4,11 @@ import booking_bot.repositories.Repository;
 import booking_bot.services.SendMessageService;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
-public class EditObjects extends CommandParent {
+public class BookObject extends CommandParent {
 
     private String commandName;
 
-    public EditObjects(SendMessageService sendMessageService, Repository repository, CommandContainer commandContainer) {
+    public BookObject(SendMessageService sendMessageService, Repository repository, CommandContainer commandContainer) {
         super(sendMessageService, repository, commandContainer);
         this.commandName = "тест";
         commandContainer.add(commandName, this);
@@ -31,7 +31,6 @@ public class EditObjects extends CommandParent {
             status = "begin";
             statusMap.put(chatId, status);
         }
-
 
         if (status.equals("begin")) {
             isFinished = false;
