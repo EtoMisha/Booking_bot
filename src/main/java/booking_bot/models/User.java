@@ -47,4 +47,5 @@ public class User {
     public void setCampus(String campus) {
         this.campus = campus;
     }
+
 }
