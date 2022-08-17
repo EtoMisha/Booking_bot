@@ -23,15 +23,15 @@ public class DataBaseConfig {
     @Value("${db.driver.name}")
     private String driverName;
 
-    @Bean
-    public HikariDataSource hikariDataSource() {
-        HikariConfig hikariConfig = new HikariConfig();
-        hikariConfig.setJdbcUrl(url);
-        hikariConfig.setUsername(username);
-        hikariConfig.setPassword(password);
-        hikariConfig.setDriverClassName(driverName);
-//        hikariConfig.setMaximumPoolSize(10);
-        return new HikariDataSource(hikariConfig);
-    }
+//    @Bean
+//    public HikariDataSource hikariDataSource() {
+//        HikariConfig hikariConfig = new HikariConfig();
+//        hikariConfig.setJdbcUrl(url);
+//        hikariConfig.setUsername(username);
+//        hikariConfig.setPassword(password);
+//        hikariConfig.setDriverClassName(driverName);
+////        hikariConfig.setMaximumPoolSize(10);
+//        return new HikariDataSource(hikariConfig);
+//    }
 
 }
