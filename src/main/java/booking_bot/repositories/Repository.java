@@ -6,6 +6,6 @@ public interface Repository<T> {
     List<T> findAll();
     void save(T entity);
     void update(T entity);
-    void delete(Object obj);
+    void delete(int id);
 
 }

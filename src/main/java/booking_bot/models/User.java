@@ -1,14 +1,13 @@
 package booking_bot.models;
 
 public class User {
-    private final int id;
+    private int id;
     private String name;
     private String login;
     private String role;
     private String campus;
 
-
-    public User(Integer id) {
+    public void setId(int id) {
         this.id = id;
     }
 
