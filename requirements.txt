@@ -1,0 +1,10 @@
+aiocache==0.11.1
+aiogram==2.14.2
+aioredis==1.3.1
+asyncio-throttle==1.0.2
+beautifulsoup4==4.9.3
+cryptography==3.4.8
+gino==1.0.1
+lxml>=4.6.5
+msgpack==1.0.2
+ujson>=5.1.0
