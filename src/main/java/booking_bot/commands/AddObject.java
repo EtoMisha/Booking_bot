@@ -73,13 +73,15 @@ public class AddObject extends CommandParent {
 
             sendMessageService.send(chatId, "Вы добавили " + input);
 
+            //TODO сохранить наименование объекта в базу
+            repository.save(newObject, newObject.getClass());
+
             statusMap.put(chatId, "begin");
             isFinished = true;
         }
 
         return isFinished;
     }
-    //TODO сохранить наименование объекта в базу
 
 
     @Override
