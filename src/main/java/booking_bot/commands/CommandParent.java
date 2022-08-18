@@ -1,26 +1,28 @@
 package booking_bot.commands;
 
-import booking_bot.models.Booking;
+import booking_bot.models.Campus;
+import booking_bot.models.Model;
 import booking_bot.repositories.Repository;
 import booking_bot.services.SendMessageService;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public abstract class CommandParent implements Command {
     protected final SendMessageService sendMessageService;
-    protected final Repository<Booking> repository;
+    protected final Repository repository;
     protected final CommandContainer commandContainer;
     protected Map<Long, String> statusMap;
-//    protected String commandName;
 
     protected boolean isFinished;
     protected Long chatId;
     protected String input;
     protected String status;
 
-    public CommandParent(SendMessageService sendMessageService, Repository<Booking> repository, CommandContainer commandContainer) {
+    public CommandParent(SendMessageService sendMessageService, Repository repository, CommandContainer commandContainer) {
         this.sendMessageService = sendMessageService;
         this.repository = repository;
         this.commandContainer = commandContainer;
@@ -42,6 +44,17 @@ public abstract class CommandParent implements Command {
         }
 
         status = statusMap.get(chatId);
+    }
+
+    protected List<String> getNames(List<Object> entityList) {
+        List<String> names = new ArrayList<>();
+
+        for (Object entity : entityList) {
+            Model model = (Model) entity;
+            names.add(model.getName());
+        }
+
+        return names;
     }
 
 //    public String getCommandName() {

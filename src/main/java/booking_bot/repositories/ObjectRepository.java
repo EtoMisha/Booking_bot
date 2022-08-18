@@ -1,7 +1,6 @@
 package booking_bot.repositories;
 
 import booking_bot.models.BookObject;
-import booking_bot.models.Booking;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -10,7 +9,7 @@ import javax.sql.DataSource;
 import java.sql.ResultSet;
 import java.util.List;
 
-public class ObjectRepository implements Repository<BookObject> {
+public class ObjectRepository implements ConcreteRepository<BookObject> {
 
     private final JdbcTemplate jdbcTemplate;
     private final RowMapper<BookObject> ROW_MAPPER = (ResultSet resultSet, int rowNum) -> {
@@ -51,8 +50,8 @@ public class ObjectRepository implements Repository<BookObject> {
     }
 
     @Override
-    public void delete(int id) throws DataAccessException {
-        String query = String.format("DELETE FROM booking_objects WHERE id = %d;", id);
+    public void delete(Object obj) throws DataAccessException {
+        String query = String.format("DELETE FROM booking_objects WHERE id = %d;", (int) obj);
         jdbcTemplate.update(query);
     }
 }

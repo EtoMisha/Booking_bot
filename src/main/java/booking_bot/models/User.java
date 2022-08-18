@@ -1,6 +1,6 @@
 package booking_bot.models;
 
-public class User {
+public class User implements Model{
     private int id;
     private String name;
     private String login;

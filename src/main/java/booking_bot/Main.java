@@ -18,36 +18,19 @@ import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 public class Main {
     public static void main(String[] args) {
 
-        AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(DataBaseConfig.class, BotConfig.class);
-
-//        CommandContainer commandContainer = context.getBean("commandContainer", CommandContainer.class);
-//        TestCommand testCommand = context.getBean("testCommand", TestCommand.class);
-//        StartCommand start = context.getBean("startCommand", StartCommand.class);
-
-//        Bot bot = context.getBean("bot", Bot.class);
-//        bot.setCommandContainer(commandContainer);
+        AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(BotConfig.class, DataBaseConfig.class);
 
 
-//        try {
-//            TelegramBotsApi botsApi = new TelegramBotsApi(DefaultBotSession.class);
-//            botsApi.registerBot(bot);
-//
-//        } catch (TelegramApiException e) {
-//            e.printStackTrace();
-//        }
+        Bot bot = context.getBean("bot", Bot.class);
 
-//        context.close();
+        try {
+            TelegramBotsApi botsApi = new TelegramBotsApi(DefaultBotSession.class);
+            botsApi.registerBot(bot);
 
-//        HikariConfig hikariConfig = new HikariConfig();
-//        hikariConfig.setJdbcUrl("jdbc:postgresql://localhost:5433/postgres");
-//        hikariConfig.setUsername("postgres");
-//        hikariConfig.setPassword("");
-//        hikariConfig.setDriverClassName("org.postgresql.Driver");
-//
-//        HikariDataSource hikariDataSource = new HikariDataSource(hikariConfig);
-//        JdbcTemplate jdbcTemplate = new JdbcTemplate(hikariDataSource);
-//        String query = "INSERT into slots (time) VALUES ('2022-05-15');";
-//        jdbcTemplate.update(query);
+        } catch (TelegramApiException e) {
+            e.printStackTrace();
+        }
+
     }
 
 }

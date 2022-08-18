@@ -1,17 +1,12 @@
 package booking_bot.commands;
 
-import booking_bot.models.Booking;
-import booking_bot.repositories.Repository;
-import booking_bot.services.SendMessageService;
-import org.springframework.stereotype.Component;
-
 import java.util.HashMap;
 import java.util.Map;
 
 public class CommandContainer {
     private final Map<String, Command> commandMap;
 
-    public CommandContainer (SendMessageService sendMessageService, Repository<Booking> slotRepository) {
+    public CommandContainer () {
         commandMap = new HashMap<>();
     }
 

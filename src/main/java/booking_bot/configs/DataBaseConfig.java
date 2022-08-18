@@ -1,11 +1,19 @@
 package booking_bot.configs;
 
+import booking_bot.models.User;
+import booking_bot.repositories.ConcreteRepository;
+import booking_bot.repositories.Repository;
+import booking_bot.repositories.RepositoryImpl;
+import booking_bot.repositories.UserRepository;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.jdbc.core.JdbcTemplate;
+
+import javax.sql.DataSource;
 
 @Configuration
 @PropertySource("classpath:db.properties")
@@ -22,16 +30,33 @@ public class DataBaseConfig {
 
     @Value("${db.driver.name}")
     private String driverName;
-//
-//    @Bean
-//    public HikariDataSource hikariDataSource() {
-//        HikariConfig hikariConfig = new HikariConfig();
-//        hikariConfig.setJdbcUrl(url);
-//        hikariConfig.setUsername(username);
-//        hikariConfig.setPassword(password);
-//        hikariConfig.setDriverClassName(driverName);
-////        hikariConfig.setMaximumPoolSize(10);
-//        return new HikariDataSource(hikariConfig);
-//    }
+
+    @Bean
+    public HikariDataSource hikariDataSource() {
+        HikariConfig hikariConfig = new HikariConfig();
+        hikariConfig.setJdbcUrl(url);
+        hikariConfig.setUsername(username);
+        hikariConfig.setPassword(password);
+        hikariConfig.setDriverClassName(driverName);
+        return new HikariDataSource(hikariConfig);
+    }
+
+    @Bean
+    JdbcTemplate jdbcTemplate(DataSource hikariDataSource) {
+        return new JdbcTemplate(hikariDataSource);
+    }
+
+    @Bean
+    public ConcreteRepository<User> userRepository(JdbcTemplate jdbcTemplate) {
+        System.out.println("context: users repo created");
+        return new UserRepository(jdbcTemplate);
+    }
+
+    @Bean
+    public Repository repository(ConcreteRepository<User> userRepository) {
+        Repository repository = new RepositoryImpl();
+        repository.addRepository(User.class, userRepository);
+        return repository;
+    }
 
 }

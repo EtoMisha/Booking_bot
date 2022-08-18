@@ -1,6 +1,5 @@
 package booking_bot.repositories;
 
-import booking_bot.models.BookObject;
 import booking_bot.models.User;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -9,7 +8,7 @@ import org.springframework.jdbc.core.RowMapper;
 import java.sql.ResultSet;
 import java.util.List;
 
-public class UserRepository implements Repository<User> {
+public class UserRepository implements ConcreteRepository<User> {
 
     private final JdbcTemplate jdbcTemplate;
     private final RowMapper<User> ROW_MAPPER = (ResultSet resultSet, int rowNum) -> {
@@ -17,8 +16,8 @@ public class UserRepository implements Repository<User> {
         user.setId(resultSet.getInt("id"));
         user.setName(resultSet.getString("name"));
         user.setLogin(resultSet.getString("login"));
-        user.setRole(resultSet.getString("role"));
-        user.setCampus(resultSet.getString("campus"));
+        user.setRole(null);
+        user.setCampus(null);
 
         return user;
     };
@@ -29,7 +28,8 @@ public class UserRepository implements Repository<User> {
 
     @Override
     public List<User> findAll() throws DataAccessException {
-        return jdbcTemplate.query("SELECT * FROM booking_objects;", ROW_MAPPER);
+        System.out.println("-- users repository: find all");
+        return jdbcTemplate.query("SELECT * FROM users;", ROW_MAPPER);
     }
 
     @Override
@@ -47,8 +47,8 @@ public class UserRepository implements Repository<User> {
     }
 
     @Override
-    public void delete(int id) throws DataAccessException {
-        String query = String.format("DELETE FROM users WHERE id = %d;", id);
+    public void delete(Object obj) throws DataAccessException {
+        String query = String.format("DELETE FROM users WHERE id = %d;", obj);
         jdbcTemplate.update(query);
     }
 }
