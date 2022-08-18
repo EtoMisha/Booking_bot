@@ -34,6 +34,16 @@ public class SendMessageServiceImpl implements SendMessageService {
     }
 
     @Override
+    public void sendCustom(SendMessage send) {
+
+        try {
+            bot.execute(send);
+        } catch (TelegramApiException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
     public void sendWithKeyboard(Long chatId, String message, List<String> buttons) {
         SendMessage send = new SendMessage();
         send.setChatId(chatId.toString());

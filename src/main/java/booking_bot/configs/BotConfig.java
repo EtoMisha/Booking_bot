@@ -6,7 +6,6 @@ import booking_bot.repositories.Repository;
 import booking_bot.models.Booking;
 import booking_bot.services.SendMessageService;
 import booking_bot.services.SendMessageServiceImpl;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,10 +20,10 @@ public class BotConfig {
 //    @Autowired
 //    CommandContainer commandContainer;
 
-    @Value("${botSt.username}")
+    @Value("${test.username}")
     private String username;
 
-    @Value("${botSt.token}")
+    @Value("${test.token}")
     private String token;
 
     @Bean
@@ -85,9 +84,9 @@ public class BotConfig {
         return new RedactObject(sendMessageService, slotsRepository, commandContainer);
     }
 
-//    @Bean
-//    public Handler handler(Repository<Slot> slotsRepository) {
-//        return new Handler(slotsRepository);
-//    }
+    @Bean
+    public Command newBooking(SendMessageService sendMessageService, Repository slotsRepository, CommandContainer commandContainer) {
+        return new NewBooking(sendMessageService, slotsRepository, commandContainer);
+    }
 
 }
