@@ -16,9 +16,9 @@ public class UserRedact extends CommandParent {
 
     public UserRedact(SendMessageService sendMessageService, Repository repository, CommandContainer commandContainer) {
         super(sendMessageService, repository, commandContainer);
-        this.commandName = "Редактировать пользователей";
+        this.commandName = "Управление пользователем";
         commandContainer.add(commandName, this);
-        userTmp = new User(0); // ID ???
+        userTmp = new User(); // ID ???
         flagRedact = false;
     }
 
@@ -66,8 +66,8 @@ public class UserRedact extends CommandParent {
     @Override
     public boolean execute(Update update, boolean begin) {
 
-        //boolean user = false; //  получить данные из БД
-        boolean user = true; //  получить данные из БД
+        boolean user = false; //  получить данные из БД
+        //boolean user = true; //  получить данные из БД
         prepare(update);
         if (begin) {
             status = "begin";
@@ -87,7 +87,7 @@ public class UserRedact extends CommandParent {
             // TODO Проверка в БД добавлен ли уже пользователь с таким ником
             //Если пользователь существует
             if (user) { //  получить данные из БД
-                sendMessageService.sendWithKeyboard(chatId, "Пользователь " + userTmp.getLogin() + " с таким ником найден. Вы можете удалить или редактировать пользователя.", makeButtonsRed());
+                sendMessageService.sendWithKeyboard(chatId, "Пользователь с ником " + userTmp.getLogin() + " найден. Вы можете удалить или отредактировать пользователя.", makeButtonsRed());
                 statusMap.put(chatId, "Редактирование");
             }
             //Если пользователь не существует

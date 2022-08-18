@@ -34,6 +34,16 @@ public class SendMessageServiceImpl implements SendMessageService {
     }
 
     @Override
+    public void sendCustom(SendMessage send) {
+
+        try {
+            bot.execute(send);
+        } catch (TelegramApiException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
     public void sendWithKeyboard(Long chatId, String message, List<String> buttons) {
         SendMessage send = new SendMessage();
         send.setChatId(chatId.toString());
@@ -56,7 +66,7 @@ public class SendMessageServiceImpl implements SendMessageService {
         keyboardRow2.add("Добавить объект");
 //        keyboardRow2.add("Редактировать каталог");
         keyboardRow2.add("Редактировать объект");
-        keyboardRow2.add("Редактировать пользователей");
+        keyboardRow2.add("Управление пользователем");
 
         ArrayList<KeyboardRow> keyBoardRows = new ArrayList<>();
         keyBoardRows.add(keyboardRow1);
