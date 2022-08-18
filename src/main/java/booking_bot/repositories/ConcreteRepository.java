@@ -9,5 +9,6 @@ public interface ConcreteRepository<T> {
     List<T> findAll() throws DataAccessException;
     void save(T entity) throws DataAccessException;
     void update(T entity) throws DataAccessException;
-    void delete(Object obj) throws DataAccessException;
+    void delete(T entity) throws DataAccessException;
+    T findByName(String name) throws DataAccessException;
 }

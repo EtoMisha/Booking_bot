@@ -1,6 +1,6 @@
 package booking_bot.models;
 
-public class Type {
+public class Type implements HasName {
 
     private int id;
     private String name;
@@ -18,6 +18,7 @@ public class Type {
         this.id = id;
     }
 
+    @Override
     public String getName() {
         return name;
     }

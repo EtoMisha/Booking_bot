@@ -1,12 +1,12 @@
 package booking_bot.models;
 
-public class BookObject {
+public class BookObject implements HasName {
     private int id;
-    private String category;
+    private Type type;
     private String name;
     private String description;
     private String image;
-    private String campus;
+    private Campus campus;
     private int floor;
     private int room_number;
 
@@ -18,14 +18,15 @@ public class BookObject {
         this.id = id;
     }
 
-    public String getCategory() {
-        return category;
+    public Type getType() {
+        return type;
     }
 
-    public void setCategory(String category) {
-        this.category = category;
+    public void setType(Type type) {
+        this.type = type;
     }
 
+    @Override
     public String getName() {
         return name;
     }
@@ -50,11 +51,11 @@ public class BookObject {
         this.image = image;
     }
 
-    public String getCampus() {
+    public Campus getCampus() {
         return campus;
     }
 
-    public void setCampus(String campus) {
+    public void setCampus(Campus campus) {
         this.campus = campus;
     }
 

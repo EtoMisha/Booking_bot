@@ -47,8 +47,7 @@ public class TestCommand extends CommandParent {
             sendMessageService.send(chatId, "Привет");
 
             try {
-                List<Object> usersList = repository.findAll(User.class);
-                List<String> buttons = getNames(usersList);
+                List<String> buttons = getNames(repository.findAll(User.class));
                 System.out.println(Arrays.toString(buttons.toArray()));
                 sendMessageService.sendWithKeyboard(chatId, "Ок, а теперь выбери что-нибудь", buttons);
                 statusMap.put(chatId, "выбор с кнопки");

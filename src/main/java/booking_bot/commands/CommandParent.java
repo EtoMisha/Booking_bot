@@ -1,7 +1,6 @@
 package booking_bot.commands;
 
-import booking_bot.models.Campus;
-import booking_bot.models.Model;
+import booking_bot.models.HasName;
 import booking_bot.repositories.Repository;
 import booking_bot.services.SendMessageService;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -50,8 +49,8 @@ public abstract class CommandParent implements Command {
         List<String> names = new ArrayList<>();
 
         for (Object entity : entityList) {
-            Model model = (Model) entity;
-            names.add(model.getName());
+            HasName hasName = (HasName) entity;
+            names.add(hasName.getName());
         }
 
         return names;

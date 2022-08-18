@@ -1,6 +1,6 @@
 package booking_bot.models;
 
-public class Campus implements Model {
+public class Campus implements HasName {
 
     private int id;
     private String name;

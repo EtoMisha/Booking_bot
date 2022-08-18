@@ -1,6 +1,6 @@
 package booking_bot.models;
 
-public class Role {
+public class Role implements HasName {
 
     private int id;
     private String name;
@@ -18,6 +18,7 @@ public class Role {
         this.id = id;
     }
 
+    @Override
     public String getName() {
         return name;
     }

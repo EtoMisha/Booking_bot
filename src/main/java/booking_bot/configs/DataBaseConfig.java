@@ -1,10 +1,7 @@
 package booking_bot.configs;
 
-import booking_bot.models.User;
-import booking_bot.repositories.ConcreteRepository;
-import booking_bot.repositories.Repository;
-import booking_bot.repositories.RepositoryImpl;
-import booking_bot.repositories.UserRepository;
+import booking_bot.models.*;
+import booking_bot.repositories.*;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import org.springframework.beans.factory.annotation.Value;
@@ -47,16 +44,19 @@ public class DataBaseConfig {
     }
 
     @Bean
-    public ConcreteRepository<User> userRepository(JdbcTemplate jdbcTemplate) {
-        System.out.println("context: users repo created");
-        return new UserRepository(jdbcTemplate);
-    }
-
-    @Bean
-    public Repository repository(ConcreteRepository<User> userRepository) {
+    public Repository repository(JdbcTemplate jdbcTemplate) {
         Repository repository = new RepositoryImpl();
-        repository.addRepository(User.class, userRepository);
+        repository.addRepository(BookObject.class, new ObjectRepository(jdbcTemplate));
+        repository.addRepository(Booking.class, new BookingRepository(jdbcTemplate));
+        repository.addRepository(Campus.class, new CampusRepository(jdbcTemplate));
+        repository.addRepository(Role.class, new RolesRepository(jdbcTemplate));
+        repository.addRepository(Status.class, new StatusRepository(jdbcTemplate));
+        repository.addRepository(Type.class, new TypeRepository(jdbcTemplate));
+        repository.addRepository(User.class, new UserRepository(jdbcTemplate));
+
         return repository;
     }
+
+
 
 }
