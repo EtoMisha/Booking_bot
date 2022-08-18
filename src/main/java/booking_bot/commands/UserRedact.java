@@ -66,7 +66,7 @@ public class UserRedact extends CommandParent {
     @Override
     public boolean execute(Update update, boolean begin) {
 
-        boolean user = false; //  получить данные из БД
+        boolean isUser = false;
         //boolean user = true; //  получить данные из БД
         prepare(update);
         if (begin) {
@@ -84,31 +84,35 @@ public class UserRedact extends CommandParent {
         } else if (status.equals("Ввод логина")) {
 
             userTmp.setLogin(input);
-            // TODO Проверка в БД добавлен ли уже пользователь с таким ником
-            //Если пользователь существует
-            if (user) { //  получить данные из БД
+            List<Object> usersList = repository.findAll(User.class);
+
+            for(Object obj : usersList) {
+                User userInList = (User) obj;
+                if (userInList.getLogin().equals(input)) {
+                    isUser = true;
+                    userTmp = userInList;
+                }
+            }
+            if (isUser) {
                 sendMessageService.sendWithKeyboard(chatId, "Пользователь с ником " + userTmp.getLogin() + " найден. Вы можете удалить или отредактировать пользователя.", makeButtonsRed());
                 statusMap.put(chatId, "Редактирование");
             }
-            //Если пользователь не существует
-            if (!user) { // получить данные из БД
-                sendMessageService.sendWithKeyboard(chatId, "Пользователь  " + userTmp.getLogin() + " с таким ником не существует. Вы можете добавить пользователя.", makeButtonsAdd());
+            if (!isUser) {
+                sendMessageService.sendWithKeyboard(chatId, "Пользователь c ником " + userTmp.getLogin() + " не существует. Вы можете добавить пользователя.", makeButtonsAdd());
                 statusMap.put(chatId, "Добавление");
             }
 
         } else if (status.equals("Редактирование")) {
 
             if (input.equals("Редактировать")) {
-                //TODO получить пользователя из БД????
-
                 sendMessageService.sendWithKeyboard(chatId, "Что будем редактировать?", makeButtons());
                 statusMap.put(chatId, "Выбор поля");
             }
 
             if (input.equals("Удалить")) {
-                //TODO удалить пользователя из БД
                 sendMessageService.send(chatId, "Пользователь " + userTmp.getLogin() + " удален");
-
+                //удалить пользователя из БД
+                repository.delete(userTmp, userTmp.getClass());
 
                 statusMap.put(chatId, "begin");
                 isFinished = true;
@@ -142,8 +146,11 @@ public class UserRedact extends CommandParent {
         } else if (status.equals("Кампус")) {
             userTmp.setCampus(input);
             if (flagRedact){
-                sendMessageService.send(chatId, "Пользователь отредактирован" +'\n' + "логин: " + userTmp.getLogin() + '\n' + "имя: " + userTmp.getName() + '\n' + "кампус: " + userTmp.getCampus() + '\n' + "роль: " + userTmp.getRole());
+                // update
+                //repository.update(userTmp, userTmp.getClass());
 
+                sendMessageService.send(chatId, "Пользователь отредактирован" +'\n' + "логин: " + userTmp.getLogin() + '\n' + "имя: " + userTmp.getName() + '\n' + "кампус: " + userTmp.getCampus() + '\n' + "роль: " + userTmp.getRole());
+                repository.update(userTmp, userTmp.getClass());
                 statusMap.put(chatId, "begin");
                 isFinished = true;
             } else {
@@ -155,11 +162,14 @@ public class UserRedact extends CommandParent {
 
             userTmp.setRole(input);
             if (flagRedact) {
+                // update
                 sendMessageService.send(chatId, "Пользователь отредактирован" +'\n' + "логин: " + userTmp.getLogin() + '\n' + "имя: " + userTmp.getName() + '\n' + "кампус: " + userTmp.getCampus() + '\n' + "роль: " + userTmp.getRole());
+                repository.update(userTmp, userTmp.getClass());
             } else {
                 sendMessageService.send(chatId, "Новый пользователь добавлен:" + '\n' + "логин: " + userTmp.getLogin() + '\n' + "имя: " + userTmp.getName() + '\n' + "кампус: " + userTmp.getCampus() + '\n' + "роль: " + userTmp.getRole());
-                //TODO добавить пользователя в БД
+                repository.save(userTmp, userTmp.getClass());
             }
+//            repository.save(userTmp, userTmp.getClass());
             statusMap.put(chatId, "begin");
             isFinished = true;
         }
