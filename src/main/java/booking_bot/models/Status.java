@@ -1,6 +1,6 @@
 package booking_bot.models;
 
-public class Status {
+public class Status implements HasName {
     private int id;
     private String name;
 
@@ -17,6 +17,7 @@ public class Status {
         this.id = id;
     }
 
+    @Override
     public String getName() {
         return name;
     }

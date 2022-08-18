@@ -14,8 +14,6 @@ public class RepositoryImpl implements Repository {
 
     @Override
     public List<Object> findAll(Class repoClass) {
-        System.out.println("- repo impl: find all, class = " + repoClass);
-        System.out.println("- repo impl: impl obj: " + this);
         return repositories.get(repoClass).findAll();
     }
 
@@ -37,8 +35,6 @@ public class RepositoryImpl implements Repository {
     @Override
     public void addRepository(Class classname, ConcreteRepository repository) {
         repositories.put(classname, repository);
-        System.out.println("- addRepository: repo added");
-        System.out.println("- addRepository: impl obj: " + this);
     }
 
 

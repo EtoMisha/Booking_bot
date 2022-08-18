@@ -1,6 +1,8 @@
 package booking_bot.repositories;
 
 import booking_bot.models.BookObject;
+import booking_bot.models.Campus;
+import booking_bot.models.Type;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -12,46 +14,54 @@ import java.util.List;
 public class ObjectRepository implements ConcreteRepository<BookObject> {
 
     private final JdbcTemplate jdbcTemplate;
+
     private final RowMapper<BookObject> ROW_MAPPER = (ResultSet resultSet, int rowNum) -> {
         BookObject bookObject = new BookObject();
-        bookObject.setId(resultSet.getInt("id"));
-        bookObject.setCategory(resultSet.getString("category"));
-        bookObject.setName(resultSet.getString("name"));
+        bookObject.setId(resultSet.getInt("booking_objects.id"));
+        bookObject.setType(new Type(resultSet.getInt("types.id"), resultSet.getString("types.name")));
+        bookObject.setName(resultSet.getString("booking_objects.name"));
         bookObject.setDescription(resultSet.getString("description"));
         bookObject.setImage(resultSet.getString("image"));
-        bookObject.setCampus(resultSet.getString("campus"));
+        bookObject.setCampus(new Campus(resultSet.getInt("campuses.id"), resultSet.getString("campuses.name")));
 
         return bookObject;
     };
 
-    public ObjectRepository(DataSource ds) {
-        this.jdbcTemplate = new JdbcTemplate(ds);
+    public ObjectRepository(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
     }
 
     @Override
     public List<BookObject> findAll() throws DataAccessException {
-        return jdbcTemplate.query("SELECT * FROM booking_objects;", ROW_MAPPER);
+        return jdbcTemplate.query("SELECT * FROM booking_objects join types join campuses;", ROW_MAPPER);
     }
 
     @Override
     public void save(BookObject entity) throws DataAccessException {
-        String query = String.format("INSERT into booking_objects (type_id) VALUES ('%s');",
-                entity.getId(), entity.getCategory(), entity.getName(),
-                entity.getDescription(), entity.getImage(), entity.getCampus());
+        String query = String.format("INSERT into booking_objects (type_id, name, description, image, campus_id, floor, room_number)" +
+                        "VALUES (%d, '%s', '%s', '%s', %d, %d, %d);",
+                entity.getType().getId(), entity.getName(), entity.getDescription(),
+                entity.getImage(), entity.getCampus().getId(), entity.getFloor(), entity.getRoom_number());
         jdbcTemplate.update(query);
     }
 
     @Override
     public void update(BookObject entity) throws DataAccessException {
-        String query = String.format("UPDATE booking_objects SET type_id = '%d' WHERE id = %d;",
-                entity.getCategory(), entity.getName(), entity.getDescription(),
-                entity.getImage(), entity.getCampus(), entity.getId());
+        String query = String.format("UPDATE booking_objects SET type_id = %d, name = '%s', description = '%s, " +
+                        "image = '%s', campus_id = %d, floor = %d, room_number = %d WHERE id = %d;",
+                entity.getType().getId(), entity.getName(), entity.getDescription(), entity.getImage(),
+                entity.getCampus().getId(), entity.getFloor(), entity.getRoom_number(), entity.getId());
         jdbcTemplate.update(query);
     }
 
     @Override
-    public void delete(Object obj) throws DataAccessException {
-        String query = String.format("DELETE FROM booking_objects WHERE id = %d;", (int) obj);
+    public void delete(BookObject entity) throws DataAccessException {
+        String query = String.format("DELETE FROM booking_objects WHERE id = %d;", entity.getId());
         jdbcTemplate.update(query);
+    }
+
+    @Override
+    public BookObject findByName(String name) throws DataAccessException {
+        return jdbcTemplate.queryForObject("SELECT * FROM booking_objects WHERE name = '" + name + "' join types join campuses;", ROW_MAPPER);
     }
 }
