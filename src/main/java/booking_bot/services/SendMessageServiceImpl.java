@@ -3,6 +3,7 @@ package booking_bot.services;
 import booking_bot.Bot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
+import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
@@ -25,10 +26,10 @@ public class SendMessageServiceImpl implements SendMessageService {
         SendMessage send = new SendMessage();
         send.setChatId(chatId.toString());
         send.setText(message);
-
+//        User userTmp = ;
         //TODO проверить по chatId роль пользователя и показывать соответстующую клавиатуру
         //TODO или если такого chatID вообще нет - вообще без кнопок
-        send.setReplyMarkup(adminKeyboard());
+//        send.setReplyMarkup(adminKeyboard());
 //        send.setReplyMarkup(studentKeyboard());
 
         send.setParseMode("markdown");
