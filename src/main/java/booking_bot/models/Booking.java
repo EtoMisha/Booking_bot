@@ -3,34 +3,43 @@ package booking_bot.models;
 import java.time.LocalDateTime;
 
 public class Booking {
-    private final int id;
-    private LocalDateTime start;
-    private LocalDateTime end;
+    private int id;
+    private LocalDateTime timeStart;
+    private LocalDateTime timeEnd;
+    private Status status;
     private BookObject bookObject;
     private User user;
-
-    public Booking(int id) {
-        this.id = id;
-    }
 
     public int getId() {
         return id;
     }
 
-    public LocalDateTime getStart() {
-        return start;
+    public void setId(int id) {
+        this.id = id;
     }
 
-    public void setStart(LocalDateTime start) {
-        this.start = start;
+    public LocalDateTime getTimeStart() {
+        return timeStart;
     }
 
-    public LocalDateTime getEnd() {
-        return end;
+    public void setTimeStart(LocalDateTime timeStart) {
+        this.timeStart = timeStart;
     }
 
-    public void setEnd(LocalDateTime end) {
-        this.end = end;
+    public LocalDateTime getTimeEnd() {
+        return timeEnd;
+    }
+
+    public void setTimeEnd(LocalDateTime timeEnd) {
+        this.timeEnd = timeEnd;
+    }
+
+    public Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
     }
 
     public BookObject getBookObject() {

@@ -1,22 +1,20 @@
 package booking_bot.commands;
 
-import booking_bot.repositories.Repository;
+import booking_bot.models.User;
+import booking_bot.repositories.Controller;
 import booking_bot.services.SendMessageService;
+import org.springframework.dao.DataAccessException;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class TestCommand extends CommandParent {
 
     private String commandName;
 
-    public TestCommand(SendMessageService sendMessageService, Repository repository, CommandContainer commandContainer) {
-        super(sendMessageService, repository, commandContainer);
+    public TestCommand(SendMessageService sendMessageService, Controller controller, CommandContainer commandContainer) {
+        super(sendMessageService, controller, commandContainer);
         this.commandName = "тест";
         commandContainer.add(commandName, this);
     }
@@ -43,25 +41,25 @@ public class TestCommand extends CommandParent {
 
         if (status.equals("begin")) {
             isFinished = false;
-            sendMessageService.send(chatId, "Введите имя пользователя");
+            sendMessageService.send(chatId, "Привет");
 
-            statusMap.put(chatId, "Ввод имени");
-        } else if (status.equals("Ввод имени")) {
+            try {
+                List<String> buttons = getNames(controller.getUser().findAll());
+                System.out.println(Arrays.toString(buttons.toArray()));
+                sendMessageService.sendWithKeyboard(chatId, "Ок, а теперь выбери что-нибудь", buttons);
+                statusMap.put(chatId, "выбор с кнопки");
+            } catch (DataAccessException e) {
+                sendMessageService.send(chatId, "Ошибка с БД");
+                e.printStackTrace();
+                statusMap.put(chatId, "begin");
+                isFinished = true;
+            }
 
-            sendMessageService.send(chatId, "Вы ввели " + input);
-            // сохранить имя в базу
 
-            List<String> buttons = new ArrayList<>();
-            buttons.add("кнопка 1");
-            buttons.add("кнопка 2");
-            sendMessageService.sendWithKeyboard(chatId, "Ок, а теперь выбери что-нибудь", buttons);
-
-
-            statusMap.put(chatId, "выбор с кнопки");
         } else if (status.equals("выбор с кнопки")) {
 
 
-            sendMessageService.send(chatId, "Вы нажили " + input);
+            sendMessageService.send(chatId, "Вы нажали " + input);
 
             statusMap.put(chatId, "begin");
             isFinished = true;

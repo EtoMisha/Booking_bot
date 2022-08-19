@@ -1,6 +1,6 @@
 package booking_bot.commands;
 
-import booking_bot.repositories.Repository;
+import booking_bot.repositories.Controller;
 import booking_bot.services.SendMessageService;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -18,8 +18,8 @@ import java.util.List;
 public class BookObject extends CommandParent {
     private String commandName = "Забронировать";
 
-    public BookObject(SendMessageService sendMessageService, Repository repository, CommandContainer commandContainer) {
-        super(sendMessageService, repository, commandContainer);
+    public BookObject(SendMessageService sendMessageService, Controller controller, CommandContainer commandContainer) {
+        super(sendMessageService, controller, commandContainer);
         commandContainer.add(this.commandName, this);
     }
 

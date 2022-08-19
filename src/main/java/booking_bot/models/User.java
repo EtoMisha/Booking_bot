@@ -1,26 +1,36 @@
 package booking_bot.models;
 
-public class User {
+public class User implements HasName {
     private int id;
     private String name;
+    private Role role;
     private String login;
-    private String role;
-    private String campus;
+    private Campus campus;
+    private Long telegramId;
 
-    public void setId(int id) {
-        this.id = id;
+    @Override
+    public String getName() {
+        return name;
     }
 
     public int getId() {
         return id;
     }
 
-    public String getName() {
-        return name;
+    public void setId(int id) {
+        this.id = id;
     }
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
     }
 
     public String getLogin() {
@@ -31,20 +41,24 @@ public class User {
         this.login = login;
     }
 
-    public String getRole() {
-        return role;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
-    }
-
-    public String getCampus() {
+    public Campus getCampus() {
         return campus;
     }
 
-    public void setCampus(String campus) {
+    public void setCampus(Campus campus) {
         this.campus = campus;
     }
 
+    public Long getTelegramId() {
+        return telegramId;
+    }
+
+    public void setTelegramId(Long telegramId) {
+        this.telegramId = telegramId;
+    }
+
+    @Override
+    public String toString() {
+        return name;
+    }
 }

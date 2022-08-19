@@ -2,18 +2,13 @@ package booking_bot.configs;
 
 import booking_bot.Bot;
 import booking_bot.commands.*;
-import booking_bot.repositories.Repository;
-import booking_bot.models.Booking;
+import booking_bot.repositories.Controller;
 import booking_bot.services.SendMessageService;
 import booking_bot.services.SendMessageServiceImpl;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
-import org.telegram.telegrambots.meta.TelegramBotsApi;
-import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
-import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 
 @Configuration
 @PropertySource("classpath:bot.properties")
@@ -21,17 +16,11 @@ public class BotConfig {
 //    @Autowired
 //    CommandContainer commandContainer;
 
-    @Value("${bot.username}")
+    @Value("${test.username}")
     private String username;
 
-    @Value("${bot.token}")
+    @Value("${test.token}")
     private String token;
-
-    @Bean
-    public Repository<Booking> slotsRepository () {
-//        return new SlotsRepository(hikariDataSource);
-        return null;
-    }
 
     @Bean
     public SendMessageService sendMessageService (Bot bot) {
@@ -39,55 +28,45 @@ public class BotConfig {
     }
 
     @Bean
-    Bot bot() {
+    Bot bot(CommandContainer commandContainer) {
        Bot bot = new Bot(username, token);
-       bot.setCommandContainer(commandContainer(sendMessageService(bot), slotsRepository()));
+       bot.setCommandContainer(commandContainer);
        return bot;
     }
 
     @Bean
-    TelegramBotsApi telegramBotsApi() throws TelegramApiException {
-
-        TelegramBotsApi telegramBotsApi = new TelegramBotsApi(DefaultBotSession.class);
-        telegramBotsApi.registerBot(bot());
-        return telegramBotsApi;
+    public CommandContainer commandContainer () {
+        return new CommandContainer();
     }
 
     @Bean
-    public CommandContainer commandContainer (SendMessageService sendMessageService,
-                                              Repository<Booking> slotRepository) {
-        CommandContainer commandContainer = new CommandContainer(sendMessageService, slotRepository);
-        return commandContainer;
+    public Command testCommand(SendMessageService sendMessageService, Controller controller, CommandContainer commandContainer) {
+        return new TestCommand(sendMessageService, controller, commandContainer);
     }
 
     @Bean
-    public Command testCommand(SendMessageService sendMessageService, Repository slotsRepository, CommandContainer commandContainer) {
-        return new TestCommand(sendMessageService, slotsRepository, commandContainer);
+    public Command userRedact(SendMessageService sendMessageService, Controller controller, CommandContainer commandContainer) {
+        return new UserRedact(sendMessageService, controller, commandContainer);
     }
 
     @Bean
-    public Command userRedact(SendMessageService sendMessageService, Repository slotsRepository, CommandContainer commandContainer) {
-        return new UserRedact(sendMessageService, slotsRepository, commandContainer);
+    public Command startCommand(SendMessageService sendMessageService, Controller controller, CommandContainer commandContainer) {
+        return new StartCommand(sendMessageService, controller, commandContainer);
     }
 
     @Bean
-    public Command startCommand(SendMessageService sendMessageService, Repository slotsRepository, CommandContainer commandContainer) {
-        return new StartCommand(sendMessageService, slotsRepository, commandContainer);
+    public Command addObject(SendMessageService sendMessageService, Controller controller, CommandContainer commandContainer) {
+        return new AddObject(sendMessageService, controller, commandContainer);
     }
 
     @Bean
-    public Command addObject(SendMessageService sendMessageService, Repository slotsRepository, CommandContainer commandContainer) {
-        return new AddObject(sendMessageService, slotsRepository, commandContainer);
+    public Command redactObject(SendMessageService sendMessageService, Controller controller, CommandContainer commandContainer) {
+        return new RedactObject(sendMessageService, controller, commandContainer);
     }
 
     @Bean
-    public Command redactObject(SendMessageService sendMessageService, Repository slotsRepository, CommandContainer commandContainer) {
-        return new RedactObject(sendMessageService, slotsRepository, commandContainer);
+    public Command newBooking(SendMessageService sendMessageService, Controller controller, CommandContainer commandContainer) {
+        return new NewBooking(sendMessageService, controller, commandContainer);
     }
-
-//    @Bean
-//    public Handler handler(Repository<Slot> slotsRepository) {
-//        return new Handler(slotsRepository);
-//    }
 
 }
