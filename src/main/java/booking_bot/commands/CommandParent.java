@@ -1,6 +1,8 @@
 package booking_bot.commands;
 
+import booking_bot.models.BookObject;
 import booking_bot.models.HasName;
+import booking_bot.models.Type;
 import booking_bot.repositories.Repository;
 import booking_bot.services.SendMessageService;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -54,6 +56,18 @@ public abstract class CommandParent implements Command {
         }
 
         return names;
+    }
+
+    protected List<Object> objectsByType(Type type) {
+
+        List<BookObject> bookObjects = repository.findAll(BookObject.class);
+        List<Object> objectsOfType = new ArrayList<>();
+        for (BookObject obj : bookObjects) {
+            if (obj.getType().equals(type)) {
+                objectsOfType.add(obj);
+            }
+        }
+        return objectsOfType;
     }
 
 //    public String getCommandName() {

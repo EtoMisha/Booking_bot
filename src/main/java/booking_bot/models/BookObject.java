@@ -74,4 +74,9 @@ public class BookObject implements HasName {
     public void setRoom_number(int room_number) {
         this.room_number = room_number;
     }
+
+    @Override
+    public String toString() {
+        return name;
+    }
 }

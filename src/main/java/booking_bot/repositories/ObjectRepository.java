@@ -33,7 +33,7 @@ public class ObjectRepository implements ConcreteRepository<BookObject> {
 
     @Override
     public List<BookObject> findAll() throws DataAccessException {
-        return jdbcTemplate.query("SELECT * FROM booking_objects join types join campuses;", ROW_MAPPER);
+        return jdbcTemplate.query("SELECT * FROM booking_objects, types, campuses WHERE type_id = types.id AND campus_id = campuses.id;", ROW_MAPPER);
     }
 
     @Override
@@ -62,6 +62,6 @@ public class ObjectRepository implements ConcreteRepository<BookObject> {
 
     @Override
     public BookObject findByName(String name) throws DataAccessException {
-        return jdbcTemplate.queryForObject("SELECT * FROM booking_objects WHERE name = '" + name + "' join types join campuses;", ROW_MAPPER);
+        return jdbcTemplate.queryForObject("SELECT * FROM booking_objects join types join campuses WHERE booking_objects.name = '" + name + "';", ROW_MAPPER);
     }
 }

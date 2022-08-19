@@ -1,16 +1,21 @@
 package booking_bot.commands;
 
+import booking_bot.models.BookObject;
+import booking_bot.models.Booking;
+import booking_bot.models.Status;
+import booking_bot.models.Type;
 import booking_bot.repositories.Repository;
 import booking_bot.services.SendMessageService;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
+import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
-import java.time.DayOfWeek;
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.time.MonthDay;
+import java.awt.print.Book;
+import java.io.File;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
@@ -22,10 +27,14 @@ public class NewBooking extends CommandParent {
     private LocalDate selectedDate;
     private LocalTime timeStart;
     private LocalTime timeEnd;
+    private BookObject bookObject;
+    Booking booking;
 
     public NewBooking(SendMessageService sendMessageService, Repository repository, CommandContainer commandContainer) {
         super(sendMessageService, repository, commandContainer);
         commandContainer.add(commandName, this);
+        bookObject = new BookObject();
+        booking = new Booking();
     }
 
     public boolean execute(Update update, boolean begin) {
@@ -41,23 +50,30 @@ public class NewBooking extends CommandParent {
 
         if (status.equals("begin")) {
             isFinished = false;
-            buttons = new ArrayList<>();
-            buttons.add("Помещения");
-            buttons.add("Настолки");
-            buttons.add("Спортинвентарь");
+            buttons = getNames(repository.findAll(Type.class));
             sendMessageService.sendWithKeyboard(chatId, "Выберите категорию", buttons);
             statusMap.put(chatId, "Выбор объекта");
 
         } else if (status.equals("Выбор объекта")) {
-            buttons = new ArrayList<>();
-            buttons.add("Переговорка");
-            buttons.add("Игровая");
-            buttons.add("Спортинвентарь");
-            sendMessageService.sendWithKeyboard(chatId, "Выберите что забронировать", buttons);
-            statusMap.put(chatId, "Ввод даты");
 
-        } else if (this.status.equals("Ввод даты")) {
+            Type type = (Type)repository.findByName(input, Type.class);
+            List<Object> bookObjectList = objectsByType(type);
+
+            sendMessageService.send(chatId, "Выберите что забронировать:");
+
+
+            for (Object object : bookObjectList) {
+                SendPhoto sendPhoto = makeObjectMessage(object);
+                sendMessageService.sendPhoto(sendPhoto);
+            }
+
+            statusMap.put(chatId, "Запрос даты");
+        } else if (this.status.equals("Запрос даты")) {
+
+            bookObject = (BookObject) repository.findByName(input, BookObject.class);
+            System.out.println("new booking" + bookObject);
             SendMessage send = new SendMessage();
+
             send.setChatId(chatId.toString());
             send.setText("Выберите дату");
             send.setReplyMarkup(makeCalendar());
@@ -71,7 +87,12 @@ public class NewBooking extends CommandParent {
             } else {
                 selectedDate = LocalDate.of(LocalDate.now().getYear(), LocalDate.now().getMonth(), Integer.parseInt(input));
                 String bookedSlots = getBookedSlots(selectedDate);
-                sendMessageService.send(chatId, "На эту дату уже есть такие бронирования:\n" + bookedSlots);
+
+                if (bookedSlots == null) {
+                    sendMessageService.send(chatId, "На эту дату всё свободно");
+                } else {
+                    sendMessageService.send(chatId, "На эту дату уже есть такие бронирования:\n" + bookedSlots);
+                }
 
                 sendMessageService.send(chatId, "Введите время начала в формате ЧЧ.ММ\nНапример 12.30");
                 statusMap.put(chatId, "Ввод времени начала");
@@ -89,13 +110,21 @@ public class NewBooking extends CommandParent {
 
         } else if (status.equals("Ввод времени окончания")) {
 
+            DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd.MM.yy");
             try {
                 timeEnd = LocalTime.parse(input, timeFormatter);
                 if (timeEnd.isBefore(timeStart)) {
                     sendMessageService.send(chatId, "Время окончания должно быть раньше времени начала.\nВведите время окончания снова");
                     statusMap.put(chatId, "Ввод времени окончания");
                 } else {
-                    sendMessageService.send(chatId, "Готово. Забронировали с " + timeStart + " до " + timeEnd);
+                    booking.setBookObject(bookObject);
+                    booking.setTimeStart(LocalDateTime.of(selectedDate, timeStart));
+                    booking.setTimeEnd(LocalDateTime.of(selectedDate, timeEnd));
+                    booking.setStatus((Status)repository.findByName("Занят", Status.class));
+
+                    sendMessageService.send(chatId, "Готово. Забронировали на " + selectedDate.format(dateFormatter) + " с " + timeStart + " до " + timeEnd);
+
+                    repository.save(booking, Booking.class);
                     statusMap.put(chatId, "begin");
                     isFinished = true;
                 }
@@ -154,4 +183,32 @@ public class NewBooking extends CommandParent {
     private String getBookedSlots(LocalDate date) {
         return  null;
     }
+
+    private SendPhoto makeObjectMessage(Object object) {
+//        SendMessage send = new SendMessage();
+        SendPhoto sendPhoto = new SendPhoto();
+
+        sendPhoto.setChatId(chatId.toString());
+        sendPhoto.setParseMode("markdown");
+        BookObject bookObject = (BookObject) object;
+        String objectText = "*" + bookObject.getName() + "*\n"
+                + bookObject.getDescription();
+        sendPhoto.setCaption(objectText);
+
+        sendPhoto.setPhoto(new InputFile(new File("meme.jpg")));
+
+        InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
+        List<List<InlineKeyboardButton>> totalList = new ArrayList<>();
+        List<InlineKeyboardButton> keyboardButtonRow = new ArrayList<>();
+        InlineKeyboardButton button = new InlineKeyboardButton("Забронировать");
+        button.setCallbackData(bookObject.getName());
+        keyboardButtonRow.add(button);
+        totalList.add(keyboardButtonRow);
+        inlineKeyboardMarkup.setKeyboard(totalList);
+        sendPhoto.setReplyMarkup(inlineKeyboardMarkup);
+
+        return sendPhoto;
+    }
+
+
 }

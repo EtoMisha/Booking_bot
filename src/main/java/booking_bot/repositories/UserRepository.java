@@ -30,7 +30,7 @@ public class UserRepository implements ConcreteRepository<User> {
 
     @Override
     public List<User> findAll() throws DataAccessException {
-        return jdbcTemplate.query("SELECT * FROM users join roles join campuses;", ROW_MAPPER);
+        return jdbcTemplate.query("SELECT * FROM users, roles, campuses WHERE role_id = roles.id AND campus_id = campuses.id;", ROW_MAPPER);
     }
 
     @Override

@@ -1,6 +1,8 @@
 package booking_bot.commands;
 
 import booking_bot.models.BookObject;
+import booking_bot.models.Campus;
+import booking_bot.models.Type;
 import booking_bot.repositories.Repository;
 import booking_bot.services.SendMessageService;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -43,32 +45,23 @@ public class RedactObject extends CommandParent {
         if (status.equals("begin")) {
 
             isFinished = false;
-            List<String> campuses = new ArrayList<>();
-            campuses.add("Москва");
-            campuses.add("Казань");
-            campuses.add("Новосибирск");
+            List<String> campuses = getNames(repository.findAll(Campus.class));
             sendMessageService.sendWithKeyboard(chatId, "Выберите кампус", campuses);
 
             statusMap.put(chatId, "Выбор кампуса");
         } else if (status.equals("Выбор кампуса")) {
-            tmpObject.setCampus(input);
+            tmpObject.setCampus((Campus)repository.findByName(input, Campus.class));
 
-            List<String> buttons = new ArrayList<>();
-            buttons.add("Помещения");
-            buttons.add("Настольные игры");
-            buttons.add("Спортивный инвентарь");
-
+            List<String> buttons = getNames(repository.findAll(Type.class));
             sendMessageService.sendWithKeyboard(chatId, "Выберите категорию", buttons);
 
             statusMap.put(chatId, "Выбор категории");
         } else if (status.equals("Выбор категории")) {
-            tmpObject.setCategory(input);
 
-            List<String> objects = new ArrayList<>();
-            objects.add("Переговорка");
-            objects.add("Атриум");
-            objects.add("Игровая");
+            Type type = (Type)repository.findByName(input, Type.class);
+            tmpObject.setType(type);
 
+            List<String> objects = getNames(objectsByType(type));
             sendMessageService.sendWithKeyboard(chatId, "Выберите объект", objects);
 
             statusMap.put(chatId, "Выбор объекта");
@@ -96,5 +89,6 @@ public class RedactObject extends CommandParent {
     public String getCommandName() {
         return commandName;
     }
+
 
 }

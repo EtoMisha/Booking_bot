@@ -60,7 +60,6 @@ public class Bot extends TelegramLongPollingBot {
             isFinished = command.execute(update, true);
         } else {
             System.out.println("bot: command from map");
-            System.out.println(commandContainer.getCommand(commandMap.get(chatId)).getCommandName());
             command = commandContainer.getCommand(commandMap.get(chatId));
             isFinished = command.execute(update, false);
         }

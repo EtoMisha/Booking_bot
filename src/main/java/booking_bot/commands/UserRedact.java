@@ -1,8 +1,11 @@
 package booking_bot.commands;
 
+import booking_bot.models.Campus;
+import booking_bot.models.Role;
 import booking_bot.models.User;
 import booking_bot.repositories.Repository;
 import booking_bot.services.SendMessageService;
+import org.springframework.dao.DataAccessException;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 import java.util.ArrayList;
@@ -45,16 +48,11 @@ public class UserRedact extends CommandParent {
         return (buttonsAdd);
     }
     public List<String> makeButtonsCampus() {
-        List<String> buttonsCampus = new ArrayList<>();
-        buttonsCampus.add("Москва");
-        buttonsCampus.add("Казань");
-        buttonsCampus.add("Новосибирск");
+        List<String> buttonsCampus = getNames(repository.findAll(Campus.class));
         return (buttonsCampus);
     }
     public List<String> makeButtonsRole() {
-        List<String> buttonsRole = new ArrayList<>();
-        buttonsRole.add("Студент");
-        buttonsRole.add("Сотрудник");
+        List<String> buttonsRole = getNames(repository.findAll(Role.class));
         return (buttonsRole);
     }
     public List<String> makeButtons() {
@@ -67,6 +65,8 @@ public class UserRedact extends CommandParent {
     public boolean execute(Update update, boolean begin) {
 
         boolean isUser = false;
+
+//        userTmp = new User(); // ID ???
         //boolean user = true; //  получить данные из БД
         prepare(update);
         if (begin) {
@@ -144,7 +144,7 @@ public class UserRedact extends CommandParent {
             statusMap.put(chatId, "Кампус");
 
         } else if (status.equals("Кампус")) {
-            userTmp.setCampus(input);
+            userTmp.setCampus((Campus)repository.findByName(input, Campus.class));
             if (flagRedact){
                 // update
                 //repository.update(userTmp, userTmp.getClass());
@@ -152,6 +152,7 @@ public class UserRedact extends CommandParent {
                 sendMessageService.send(chatId, "Пользователь отредактирован" +'\n' + "логин: " + userTmp.getLogin() + '\n' + "имя: " + userTmp.getName() + '\n' + "кампус: " + userTmp.getCampus() + '\n' + "роль: " + userTmp.getRole());
                 repository.update(userTmp, userTmp.getClass());
                 statusMap.put(chatId, "begin");
+                flagRedact = false;
                 isFinished = true;
             } else {
                 sendMessageService.sendWithKeyboard(chatId, "Осталось выбрать роль", makeButtonsRole());
@@ -160,14 +161,24 @@ public class UserRedact extends CommandParent {
 
         } else if (status.equals("Роль")) {
 
-            userTmp.setRole(input);
+            userTmp.setRole((Role)repository.findByName(input, Role.class));
             if (flagRedact) {
                 // update
                 sendMessageService.send(chatId, "Пользователь отредактирован" +'\n' + "логин: " + userTmp.getLogin() + '\n' + "имя: " + userTmp.getName() + '\n' + "кампус: " + userTmp.getCampus() + '\n' + "роль: " + userTmp.getRole());
                 repository.update(userTmp, userTmp.getClass());
+                flagRedact = false;
             } else {
-                sendMessageService.send(chatId, "Новый пользователь добавлен:" + '\n' + "логин: " + userTmp.getLogin() + '\n' + "имя: " + userTmp.getName() + '\n' + "кампус: " + userTmp.getCampus() + '\n' + "роль: " + userTmp.getRole());
-                repository.save(userTmp, userTmp.getClass());
+                try {
+                    repository.save(userTmp, userTmp.getClass());
+                    sendMessageService.send(chatId, "Новый пользователь добавлен:"
+                            + '\n' + "логин: " + userTmp.getLogin() + '\n'
+                            + "имя: " + userTmp.getName() + '\n' + "кампус: " + userTmp.getCampus() + '\n'
+                            + "роль: " + userTmp.getRole());
+                } catch (DataAccessException e) {
+                    sendMessageService.send(chatId, "Не получилось сохранить");
+                }
+
+
             }
 //            repository.save(userTmp, userTmp.getClass());
             statusMap.put(chatId, "begin");

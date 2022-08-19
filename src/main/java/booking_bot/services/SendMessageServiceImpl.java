@@ -2,6 +2,7 @@ package booking_bot.services;
 
 import booking_bot.Bot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
@@ -38,6 +39,15 @@ public class SendMessageServiceImpl implements SendMessageService {
 
         try {
             bot.execute(send);
+        } catch (TelegramApiException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void sendPhoto(SendPhoto sendPhoto) {
+        try {
+            bot.execute(sendPhoto);
         } catch (TelegramApiException e) {
             e.printStackTrace();
         }
