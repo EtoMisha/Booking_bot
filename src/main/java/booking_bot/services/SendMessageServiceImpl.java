@@ -25,7 +25,10 @@ public class SendMessageServiceImpl implements SendMessageService {
         SendMessage send = new SendMessage();
         send.setChatId(chatId.toString());
         send.setText(message);
-        send.setReplyMarkup(replyKeyboard());
+        //TODO проверить по chatId роль пользователя и показывать соответстующую клавиатуру
+        //TODO или если такого chatID вообще нет - вообще без кнопок
+        send.setReplyMarkup(adminKeyboard());
+//        send.setReplyMarkup(studentKeyboard());
 
         try {
             bot.execute(send);
@@ -67,7 +70,7 @@ public class SendMessageServiceImpl implements SendMessageService {
         }
     }
 
-    private ReplyKeyboardMarkup replyKeyboard() {
+    private ReplyKeyboardMarkup adminKeyboard() {
         KeyboardRow keyboardRow1 = new KeyboardRow();
         keyboardRow1.add("Забронировать");
         keyboardRow1.add("Отмена бронирования");
@@ -81,6 +84,21 @@ public class SendMessageServiceImpl implements SendMessageService {
         ArrayList<KeyboardRow> keyBoardRows = new ArrayList<>();
         keyBoardRows.add(keyboardRow1);
         keyBoardRows.add(keyboardRow2);
+
+        ReplyKeyboardMarkup replyKeyboard = new ReplyKeyboardMarkup();
+        replyKeyboard.setKeyboard(keyBoardRows);
+        replyKeyboard.setResizeKeyboard(true);
+
+        return replyKeyboard;
+    }
+
+    private ReplyKeyboardMarkup studentKeyboard() {
+        KeyboardRow keyboardRow1 = new KeyboardRow();
+        keyboardRow1.add("Забронировать");
+        keyboardRow1.add("Отмена бронирования");
+
+        ArrayList<KeyboardRow> keyBoardRows = new ArrayList<>();
+        keyBoardRows.add(keyboardRow1);
 
         ReplyKeyboardMarkup replyKeyboard = new ReplyKeyboardMarkup();
         replyKeyboard.setKeyboard(keyBoardRows);
