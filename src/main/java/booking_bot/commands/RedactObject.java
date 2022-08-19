@@ -13,11 +13,13 @@ import java.util.List;
 public class RedactObject extends CommandParent {
 
     private String commandName;
+    private BookObject tmpObject;
 
     public RedactObject(SendMessageService sendMessageService, Controller controller, CommandContainer commandContainer) {
         super(sendMessageService, controller, commandContainer);
         this.commandName = "Редактировать объект";
         commandContainer.add(commandName, this);
+        tmpObject = new BookObject();
     }
 
 
@@ -40,7 +42,7 @@ public class RedactObject extends CommandParent {
 
         System.out.println("- redactObject: " + input + " status: " + status);
 
-        BookObject tmpObject = new BookObject();
+//        BookObject tmpObject = new BookObject();
 
         if (status.equals("begin")) {
             isFinished = false;
@@ -103,6 +105,7 @@ public class RedactObject extends CommandParent {
             statusMap.put(chatId, "begin");
             isFinished = true;
         } else if (status.equals("Удаление объекта")) {
+            sendMessageService.send(chatId, "Объект " + tmpObject.getName() + " удален");
             controller.getBookingObject().delete(tmpObject);
             //TODO удалить объект из базы
 //            sendMessageService.send(chatId, "Объект " + tmpObject.getName() + " удален");
