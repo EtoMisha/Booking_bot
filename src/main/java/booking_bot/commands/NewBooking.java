@@ -250,6 +250,7 @@ public class NewBooking extends CommandParent {
                 return false;
             }
         }
+
         return true;
     }
 
