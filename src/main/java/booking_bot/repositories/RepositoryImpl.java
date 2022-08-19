@@ -33,6 +33,11 @@ public class RepositoryImpl implements Repository {
     }
 
     @Override
+    public Object findByName(String name, Class repoClass) {
+        return repositories.get(repoClass).findByName(name);
+    }
+
+    @Override
     public void addRepository(Class classname, ConcreteRepository repository) {
         repositories.put(classname, repository);
     }

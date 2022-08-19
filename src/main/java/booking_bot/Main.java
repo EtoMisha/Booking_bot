@@ -20,7 +20,6 @@ public class Main {
 
         AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(BotConfig.class, DataBaseConfig.class);
 
-
         Bot bot = context.getBean("bot", Bot.class);
 
         try {

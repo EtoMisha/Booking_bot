@@ -15,7 +15,7 @@ public class BookingRepository implements ConcreteRepository<Booking> {
 
     private final RowMapper<Booking> ROW_MAPPER = (ResultSet resultSet, int rowNum) -> {
         Booking booking = new Booking();
-        booking.setId(resultSet.getInt("booking_objects.id"));
+        booking.setId(resultSet.getInt("booking.id"));
         booking.setTimeStart(resultSet.getTimestamp("time_start").toLocalDateTime());
         booking.setTimeEnd(resultSet.getTimestamp("time_end").toLocalDateTime());
         booking.setStatus(new Status(resultSet.getInt("statuses.id"), resultSet.getString("statuses.name")));
@@ -46,8 +46,9 @@ public class BookingRepository implements ConcreteRepository<Booking> {
 
     @Override
     public List<Booking> findAll() throws DataAccessException {
-        return jdbcTemplate.query("SELECT * FROM boоkings join statuses join booking_objects join types " +
-                "join campuses join users join roles;", ROW_MAPPER);
+        return jdbcTemplate.query("SELECT * FROM boоkings, statuses, booking_objects, types, campuses, users, roles " +
+                "WHERE status_id = statuses.id AND booking_object_id = booking_objects.id AND type_id = types.id " +
+                "AND booking_objects.campus_id = campuses.id AND user_id = users.id AND role_id = roles.id AND users.campus_id = campuses.id", ROW_MAPPER);
 
     }
 

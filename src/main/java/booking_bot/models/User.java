@@ -47,4 +47,9 @@ public class User implements HasName {
     public void setCampus(Campus campus) {
         this.campus = campus;
     }
+
+    @Override
+    public String toString() {
+        return name;
+    }
 }
