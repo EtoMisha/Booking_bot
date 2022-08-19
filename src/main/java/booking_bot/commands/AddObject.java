@@ -21,7 +21,6 @@ public class AddObject extends CommandParent {
         newObject = new BookObject();
     }
 
-
     /*
     *   Поля унаследованные от родительского класса:
     *
@@ -60,15 +59,16 @@ public class AddObject extends CommandParent {
 
             sendMessageService.send(chatId, "Введите наименование объекта");
 
-
-            statusMap.put(chatId, "Ввод объекта");
-        } else if (status.equals("Ввод объекта")) {
+            statusMap.put(chatId, "Ввод наименования объекта");
+        } else if (status.equals("Ввод наименования объекта")) {
             newObject.setName(input);
-            //TODO сохранить наименование объекта в базу
-
             sendMessageService.send(chatId, "Вы добавили " + input);
 
-            //TODO сохранить наименование объекта в базу
+            sendMessageService.send(chatId, "Введите описание объекта");
+            statusMap.put(chatId, "Ввод описания объекта");
+        } else if (status.equals("Ввод описания объекта")) {
+            newObject.setDescription(input);
+            sendMessageService.send(chatId, "Вы добавили описание " + newObject.getName());
             controller.getBookingObject().save(newObject);
 
             statusMap.put(chatId, "begin");
@@ -78,12 +78,8 @@ public class AddObject extends CommandParent {
         return isFinished;
     }
 
-
     @Override
     public String getCommandName() {
         return commandName;
     }
-
-
-
 }
