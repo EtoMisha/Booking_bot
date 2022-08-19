@@ -51,6 +51,10 @@ public class UserRepository {
     }
 
     public User findByName(String name) throws DataAccessException {
-        return jdbcTemplate.queryForObject("SELECT * FROM users WHERE name = '" + name + "' join roles join campuses;", ROW_MAPPER);
+        return jdbcTemplate.queryForObject("SELECT * FROM users, roles, campuses WHERE role_id = roles.id AND campus_id = campuses.id AND users.name = '" + name + "';", ROW_MAPPER);
+    }
+
+    public User findByTelegram(Long id) throws DataAccessException {
+        return jdbcTemplate.queryForObject("SELECT * FROM users, roles, campuses WHERE role_id = roles.id AND campus_id = campuses.id AND telegram_id = " + id + ";", ROW_MAPPER);
     }
 }

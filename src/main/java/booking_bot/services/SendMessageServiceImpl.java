@@ -25,11 +25,14 @@ public class SendMessageServiceImpl implements SendMessageService {
         SendMessage send = new SendMessage();
         send.setChatId(chatId.toString());
         send.setText(message);
+
         //TODO проверить по chatId роль пользователя и показывать соответстующую клавиатуру
         //TODO или если такого chatID вообще нет - вообще без кнопок
         send.setReplyMarkup(adminKeyboard());
 //        send.setReplyMarkup(studentKeyboard());
 
+        send.setParseMode("markdown");
+       
         try {
             bot.execute(send);
         } catch (TelegramApiException e) {
