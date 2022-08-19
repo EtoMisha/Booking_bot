@@ -34,14 +34,14 @@ public class UserRepository {
     }
 
     public void save(User entity) throws DataAccessException {
-        String query = String.format("INSERT into users (name, role_id, login, campus_id, telegram_id) VALUES ('%s', %d, '%s', %d, %d);",
-                entity.getName(), entity.getRole().getId(), entity.getLogin(), entity.getCampus().getId(), entity.getTelegramId());
+        String query = String.format("INSERT into users (name, role_id, login, telegram_id, campus_id) VALUES ('%s', %d, '%s', %d, %d);",
+                entity.getName(), entity.getRole().getId(), entity.getLogin(), entity.getTelegramId(), entity.getCampus().getId());
         jdbcTemplate.update(query);
     }
 
     public void update(User entity) throws DataAccessException {
-        String query = String.format("UPDATE users SET name = '%s', role_id = %d, login = '%s', campus_id = %d, telegram_it = %d WHERE id = %d;",
-                entity.getName(), entity.getRole().getId(), entity.getLogin(), entity.getCampus().getId(), entity.getTelegramId(), entity.getId());
+        String query = String.format("UPDATE users SET name = '%s', role_id = %d, login = '%s', campus_id = %d WHERE id = %d;",
+                entity.getName(), entity.getRole().getId(), entity.getLogin(), entity.getCampus().getId(), entity.getId());
         jdbcTemplate.update(query);
     }
 

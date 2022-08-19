@@ -25,7 +25,6 @@ public class UserRedact extends CommandParent {
         flagRedact = false;
     }
 
-
     /*
     *   Поля унаследованные от родительского класса:
     *
@@ -166,6 +165,7 @@ public class UserRedact extends CommandParent {
                 flagRedact = false;
             } else {
                 try {
+                    userTmp.setTelegramId(chatId);
                     controller.getUser().save(userTmp);
                     sendMessageService.send(chatId, "Новый пользователь добавлен:"
                             + '\n' + "логин: " + userTmp.getLogin() + '\n'
