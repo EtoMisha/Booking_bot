@@ -29,7 +29,6 @@ public class StartCommand extends CommandParent {
             statusMap.put(chatId, status);
         }
 
-
         if (status.equals("begin")) {
 
 
