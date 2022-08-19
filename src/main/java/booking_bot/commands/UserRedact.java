@@ -3,7 +3,7 @@ package booking_bot.commands;
 import booking_bot.models.Campus;
 import booking_bot.models.Role;
 import booking_bot.models.User;
-import booking_bot.repositories.Repository;
+import booking_bot.repositories.Controller;
 import booking_bot.services.SendMessageService;
 import org.springframework.dao.DataAccessException;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -17,8 +17,8 @@ public class UserRedact extends CommandParent {
     private User userTmp;
     private boolean flagRedact;
 
-    public UserRedact(SendMessageService sendMessageService, Repository repository, CommandContainer commandContainer) {
-        super(sendMessageService, repository, commandContainer);
+    public UserRedact(SendMessageService sendMessageService, Controller controller, CommandContainer commandContainer) {
+        super(sendMessageService, controller, commandContainer);
         this.commandName = "Управление пользователем";
         commandContainer.add(commandName, this);
         userTmp = new User(); // ID ???
@@ -48,12 +48,10 @@ public class UserRedact extends CommandParent {
         return (buttonsAdd);
     }
     public List<String> makeButtonsCampus() {
-        List<String> buttonsCampus = getNames(repository.findAll(Campus.class));
-        return (buttonsCampus);
+        return (getNames(controller.getCampus().findAll()));
     }
     public List<String> makeButtonsRole() {
-        List<String> buttonsRole = getNames(repository.findAll(Role.class));
-        return (buttonsRole);
+        return (getNames(controller.getRoles().findAll()));
     }
     public List<String> makeButtons() {
         List<String> buttons = new ArrayList<>();
@@ -84,13 +82,12 @@ public class UserRedact extends CommandParent {
         } else if (status.equals("Ввод логина")) {
 
             userTmp.setLogin(input);
-            List<Object> usersList = repository.findAll(User.class);
+            List<User> usersList = controller.getUser().findAll();
 
-            for(Object obj : usersList) {
-                User userInList = (User) obj;
-                if (userInList.getLogin().equals(input)) {
+            for(User obj : usersList) {
+                if (obj.getLogin().equals(input)) {
                     isUser = true;
-                    userTmp = userInList;
+                    userTmp = obj;
                 }
             }
             if (isUser) {
@@ -112,7 +109,7 @@ public class UserRedact extends CommandParent {
             if (input.equals("Удалить")) {
                 sendMessageService.send(chatId, "Пользователь " + userTmp.getLogin() + " удален");
                 //удалить пользователя из БД
-                repository.delete(userTmp, userTmp.getClass());
+                controller.getUser().delete(userTmp);
 
                 statusMap.put(chatId, "begin");
                 isFinished = true;
@@ -144,13 +141,13 @@ public class UserRedact extends CommandParent {
             statusMap.put(chatId, "Кампус");
 
         } else if (status.equals("Кампус")) {
-            userTmp.setCampus((Campus)repository.findByName(input, Campus.class));
+            userTmp.setCampus(controller.getCampus().findByName(input));
             if (flagRedact){
                 // update
                 //repository.update(userTmp, userTmp.getClass());
 
                 sendMessageService.send(chatId, "Пользователь отредактирован" +'\n' + "логин: " + userTmp.getLogin() + '\n' + "имя: " + userTmp.getName() + '\n' + "кампус: " + userTmp.getCampus() + '\n' + "роль: " + userTmp.getRole());
-                repository.update(userTmp, userTmp.getClass());
+                controller.getUser().update(userTmp);
                 statusMap.put(chatId, "begin");
                 flagRedact = false;
                 isFinished = true;
@@ -161,15 +158,15 @@ public class UserRedact extends CommandParent {
 
         } else if (status.equals("Роль")) {
 
-            userTmp.setRole((Role)repository.findByName(input, Role.class));
+            userTmp.setRole(controller.getRole().findByName(input));
             if (flagRedact) {
                 // update
                 sendMessageService.send(chatId, "Пользователь отредактирован" +'\n' + "логин: " + userTmp.getLogin() + '\n' + "имя: " + userTmp.getName() + '\n' + "кампус: " + userTmp.getCampus() + '\n' + "роль: " + userTmp.getRole());
-                repository.update(userTmp, userTmp.getClass());
+                controller.getUser().update(userTmp);
                 flagRedact = false;
             } else {
                 try {
-                    repository.save(userTmp, userTmp.getClass());
+                    controller.getUser().save(userTmp);
                     sendMessageService.send(chatId, "Новый пользователь добавлен:"
                             + '\n' + "логин: " + userTmp.getLogin() + '\n'
                             + "имя: " + userTmp.getName() + '\n' + "кампус: " + userTmp.getCampus() + '\n'

@@ -1,13 +1,13 @@
 package booking_bot.commands;
 
-import booking_bot.repositories.Repository;
+import booking_bot.repositories.Controller;
 import booking_bot.services.SendMessageService;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 public class StartCommand extends CommandParent {
 
-    public StartCommand(SendMessageService sendMessageService, Repository repository, CommandContainer commandContainer) {
-        super(sendMessageService, repository, commandContainer);
+    public StartCommand(SendMessageService sendMessageService, Controller controller, CommandContainer commandContainer) {
+        super(sendMessageService, controller, commandContainer);
         commandContainer.add("/start", this);
     }
 

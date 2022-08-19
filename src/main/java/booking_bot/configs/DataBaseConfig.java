@@ -44,19 +44,9 @@ public class DataBaseConfig {
     }
 
     @Bean
-    public Repository repository(JdbcTemplate jdbcTemplate) {
-        Repository repository = new RepositoryImpl();
-        repository.addRepository(BookObject.class, new ObjectRepository(jdbcTemplate));
-        repository.addRepository(Booking.class, new BookingRepository(jdbcTemplate));
-        repository.addRepository(Campus.class, new CampusRepository(jdbcTemplate));
-        repository.addRepository(Role.class, new RolesRepository(jdbcTemplate));
-        repository.addRepository(Status.class, new StatusRepository(jdbcTemplate));
-        repository.addRepository(Type.class, new TypeRepository(jdbcTemplate));
-        repository.addRepository(User.class, new UserRepository(jdbcTemplate));
-
-        return repository;
+    Controller controller(JdbcTemplate jdbcTemplate) {
+        return new Controller(jdbcTemplate);
     }
-
 
 
 }

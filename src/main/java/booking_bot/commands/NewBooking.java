@@ -4,7 +4,7 @@ import booking_bot.models.BookObject;
 import booking_bot.models.Booking;
 import booking_bot.models.Status;
 import booking_bot.models.Type;
-import booking_bot.repositories.Repository;
+import booking_bot.repositories.Controller;
 import booking_bot.services.SendMessageService;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
@@ -13,7 +13,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
-import java.awt.print.Book;
+import java.awt.*;
 import java.io.File;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
@@ -30,8 +30,8 @@ public class NewBooking extends CommandParent {
     private BookObject bookObject;
     Booking booking;
 
-    public NewBooking(SendMessageService sendMessageService, Repository repository, CommandContainer commandContainer) {
-        super(sendMessageService, repository, commandContainer);
+    public NewBooking(SendMessageService sendMessageService, Controller controller, CommandContainer commandContainer) {
+        super(sendMessageService, controller, commandContainer);
         commandContainer.add(commandName, this);
         bookObject = new BookObject();
         booking = new Booking();
@@ -50,14 +50,13 @@ public class NewBooking extends CommandParent {
 
         if (status.equals("begin")) {
             isFinished = false;
-            buttons = getNames(repository.findAll(Type.class));
+            buttons = getNames(controller.getType().findAll());
             sendMessageService.sendWithKeyboard(chatId, "Выберите категорию", buttons);
             statusMap.put(chatId, "Выбор объекта");
 
         } else if (status.equals("Выбор объекта")) {
 
-            Type type = (Type)repository.findByName(input, Type.class);
-            List<Object> bookObjectList = objectsByType(type);
+            List<BookObject> bookObjectList = controller.getBookingObject().findByType(input);
 
             sendMessageService.send(chatId, "Выберите что забронировать:");
 
@@ -70,7 +69,7 @@ public class NewBooking extends CommandParent {
             statusMap.put(chatId, "Запрос даты");
         } else if (this.status.equals("Запрос даты")) {
 
-            bookObject = (BookObject) repository.findByName(input, BookObject.class);
+            bookObject = controller.getBookingObject().findByName(input);
             System.out.println("new booking" + bookObject);
             SendMessage send = new SendMessage();
 
@@ -120,11 +119,11 @@ public class NewBooking extends CommandParent {
                     booking.setBookObject(bookObject);
                     booking.setTimeStart(LocalDateTime.of(selectedDate, timeStart));
                     booking.setTimeEnd(LocalDateTime.of(selectedDate, timeEnd));
-                    booking.setStatus((Status)repository.findByName("Занят", Status.class));
+                    booking.setStatus(controller.getStatus().findByName("Занят"));
 
                     sendMessageService.send(chatId, "Готово. Забронировали на " + selectedDate.format(dateFormatter) + " с " + timeStart + " до " + timeEnd);
 
-                    repository.save(booking, Booking.class);
+                    controller.getBooking().save(booking);
                     statusMap.put(chatId, "begin");
                     isFinished = true;
                 }

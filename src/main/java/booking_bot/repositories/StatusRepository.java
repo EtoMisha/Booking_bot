@@ -9,7 +9,7 @@ import org.springframework.jdbc.core.RowMapper;
 import java.sql.ResultSet;
 import java.util.List;
 
-public class StatusRepository implements ConcreteRepository<Status> {
+public class StatusRepository {
 
     private final JdbcTemplate jdbcTemplate;
     private final RowMapper<Status> ROW_MAPPER = (ResultSet resultSet, int rowNum) -> {
@@ -20,30 +20,25 @@ public class StatusRepository implements ConcreteRepository<Status> {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    @Override
     public List<Status> findAll() throws DataAccessException {
         return jdbcTemplate.query("SELECT * FROM statuses;", ROW_MAPPER);
     }
 
-    @Override
     public void save(Status entity) throws DataAccessException {
         String query = String.format("INSERT into statuses (name) VALUES ('%s');", entity.getName());
         jdbcTemplate.update(query);
     }
 
-    @Override
     public void update(Status entity) throws DataAccessException {
         String query = String.format("UPDATE statuses SET name = '%s' WHERE id = %d;", entity.getName(), entity.getId());
         jdbcTemplate.update(query);
     }
 
-    @Override
     public void delete(Status entity) throws DataAccessException {
         String query = String.format("DELETE FROM statuses WHERE id = %d;", entity.getId());
         jdbcTemplate.update(query);
     }
 
-    @Override
     public Status findByName(String name) throws DataAccessException {
         return jdbcTemplate.queryForObject("SELECT * FROM statuses WHERE name = '" + name + "';", ROW_MAPPER);
     }
