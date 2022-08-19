@@ -3,8 +3,13 @@ package booking_bot.commands;
 import booking_bot.models.User;
 import booking_bot.repositories.Controller;
 import booking_bot.services.SendMessageService;
+import org.springframework.dao.DataAccessException;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class StartCommand extends CommandParent {
@@ -40,16 +45,27 @@ public class StartCommand extends CommandParent {
 
         if (status.equals("begin")) {
 
-            sendMessageService.send(chatId, "Привет, это бот Школы 21 для бронирования помещений инвентаря и вообще всего.\n");
+            try {
+                userTmp = controller.getUser().findByTelegram(chatId);
+                SendMessage send = new SendMessage(chatId.toString(), "Привет, "+ userTmp.getName());
+//                send.setReplyMarkup(studentKeyboard());
+                sendMessageService.sendCustom(send);
 
+                statusMap.put(chatId, "begin");
+                isFinished = true;
+            } catch (DataAccessException ex) {
+                sendMessageService.send(chatId, "Привет, это бот Школы 21 для бронирования помещений инвентаря и вообще всего.\n");
+                sendMessageService.send(chatId, "Авторизуйтесь.");
+                statusMap.put(chatId, "Ввод логина");
+            }
 
             // выполнение шага 1
-            sendMessageService.send(chatId, "Привет, это бот. Авторизуйтесь.");
-            statusMap.put(chatId, "Ввод логина");
+//            sendMessageService.send(chatId, "Привет, это бот. Авторизуйтесь.");
+//            statusMap.put(chatId, "Ввод логина");
 
 
         } else if (status.equals("Ввод логина")) {
-
+           // System.out.println("AAAAAA");
             userTmp.setLogin(input);
             List<User> usersList = controller.getUser().findAll();
 
@@ -98,6 +114,43 @@ public class StartCommand extends CommandParent {
     @Override
     public String getCommandName() {
         return "/start";
+    }
+
+    private ReplyKeyboardMarkup adminKeyboard() {
+        KeyboardRow keyboardRow1 = new KeyboardRow();
+        keyboardRow1.add("Забронировать");
+        keyboardRow1.add("Отмена бронирования");
+
+        KeyboardRow keyboardRow2 = new KeyboardRow();
+        keyboardRow2.add("Добавить объект");
+//        keyboardRow2.add("Редактировать каталог");
+        keyboardRow2.add("Редактировать объект");
+        keyboardRow2.add("Управление пользователем");
+
+        ArrayList<KeyboardRow> keyBoardRows = new ArrayList<>();
+        keyBoardRows.add(keyboardRow1);
+        keyBoardRows.add(keyboardRow2);
+
+        ReplyKeyboardMarkup replyKeyboard = new ReplyKeyboardMarkup();
+        replyKeyboard.setKeyboard(keyBoardRows);
+        replyKeyboard.setResizeKeyboard(true);
+
+        return replyKeyboard;
+    }
+
+    private ReplyKeyboardMarkup studentKeyboard() {
+        KeyboardRow keyboardRow1 = new KeyboardRow();
+        keyboardRow1.add("Забронировать");
+        keyboardRow1.add("Отмена бронирования");
+
+        ArrayList<KeyboardRow> keyBoardRows = new ArrayList<>();
+        keyBoardRows.add(keyboardRow1);
+
+        ReplyKeyboardMarkup replyKeyboard = new ReplyKeyboardMarkup();
+        replyKeyboard.setKeyboard(keyBoardRows);
+        replyKeyboard.setResizeKeyboard(true);
+
+        return replyKeyboard;
     }
 
 }
