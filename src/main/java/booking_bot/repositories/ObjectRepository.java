@@ -57,11 +57,11 @@ public class ObjectRepository {
     }
 
     public BookObject findByName(String name) throws DataAccessException {
-        return jdbcTemplate.queryForObject("SELECT * FROM booking_objects join types join campuses WHERE booking_objects.name = '" + name + "';", ROW_MAPPER);
+        return jdbcTemplate.queryForObject("SELECT * FROM booking_objects, types, campuses WHERE type_id = types.id AND campus_id = campuses.id AND booking_objects.name = '" + name + "';", ROW_MAPPER);
     }
 
     public List<BookObject> findByType(String typeName) throws DataAccessException {
         //TODO поправить запрос чтоб по types.name сверялся
-        return jdbcTemplate.query("SELECT * FROM booking_objects join types join campuses WHERE booking_objects.type_id = '" + typeName + "';", ROW_MAPPER);
+        return jdbcTemplate.query("SELECT * FROM booking_objects, types, campuses WHERE type_id = types.id AND campus_id = campuses.id AND types.name = '" + typeName + "';", ROW_MAPPER);
     }
 }

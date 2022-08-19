@@ -11,7 +11,6 @@ public class StartCommand extends CommandParent {
         commandContainer.add("/start", this);
     }
 
-
     /*
      *   Поля унаследованные от родительского класса:
      *
@@ -30,6 +29,8 @@ public class StartCommand extends CommandParent {
         }
 
         if (status.equals("begin")) {
+
+            sendMessageService.send(chatId, "Привет, это бот Школы 21 для бронирования помещений инвентаря и вообще всего.\n");
 
 
             // выполнение шага 1

@@ -1,11 +1,13 @@
 package booking_bot.repositories;
 
 import booking_bot.models.*;
+import org.glassfish.grizzly.http.util.TimeStamp;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 
 import java.sql.ResultSet;
+import java.sql.Timestamp;
 import java.util.List;
 
 public class BookingRepository {
@@ -51,10 +53,12 @@ public class BookingRepository {
     }
 
     public void save(Booking entity) throws DataAccessException {
-        String query = String.format("INSERT into bookings (time_start, time_end, status_id, booking_object_id, user_id)" +
+        Timestamp timeStart = Timestamp.valueOf(entity.getTimeStart());
+        Timestamp timeEnd = Timestamp.valueOf(entity.getTimeEnd());
+
+        String query = String.format("INSERT INTO bookings (time_start, time_end, status_id, booking_object_id, user_id) " +
                         "VALUES ('%s', '%s', %d, %d, %d);",
-                entity.getTimeStart(), entity.getTimeEnd(), entity.getStatus().getId(),
-                entity.getBookObject().getId(), entity.getUser().getId());
+                timeStart, timeEnd, entity.getStatus().getId(), entity.getBookObject().getId(), entity.getUser().getId());
         jdbcTemplate.update(query);
     }
 

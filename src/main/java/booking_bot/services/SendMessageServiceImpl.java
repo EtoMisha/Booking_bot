@@ -25,6 +25,7 @@ public class SendMessageServiceImpl implements SendMessageService {
         SendMessage send = new SendMessage();
         send.setChatId(chatId.toString());
         send.setText(message);
+        send.setParseMode("markdown");
         send.setReplyMarkup(replyKeyboard());
 
         try {
