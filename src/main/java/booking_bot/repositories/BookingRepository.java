@@ -5,11 +5,10 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 
-import javax.sql.DataSource;
 import java.sql.ResultSet;
 import java.util.List;
 
-public class BookingRepository implements ConcreteRepository<Booking> {
+public class BookingRepository {
 
     private final JdbcTemplate jdbcTemplate;
 
@@ -44,7 +43,6 @@ public class BookingRepository implements ConcreteRepository<Booking> {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    @Override
     public List<Booking> findAll() throws DataAccessException {
         return jdbcTemplate.query("SELECT * FROM boоkings, statuses, booking_objects, types, campuses, users, roles " +
                 "WHERE status_id = statuses.id AND booking_object_id = booking_objects.id AND type_id = types.id " +
@@ -52,7 +50,6 @@ public class BookingRepository implements ConcreteRepository<Booking> {
 
     }
 
-    @Override
     public void save(Booking entity) throws DataAccessException {
         String query = String.format("INSERT into bookings (time_start, time_end, status_id, booking_object_id, user_id)" +
                         "VALUES ('%s', '%s', %d, %d, %d);",
@@ -61,7 +58,6 @@ public class BookingRepository implements ConcreteRepository<Booking> {
         jdbcTemplate.update(query);
     }
 
-    @Override
     public void update(Booking entity) throws DataAccessException {
         String query = String.format("UPDATE bookings SET time_start = '%s', time_end = '%s', status_id = %d, " +
                         "booking_object_id = %d, user_id = %d WHERE id = %d;",
@@ -70,13 +66,11 @@ public class BookingRepository implements ConcreteRepository<Booking> {
         jdbcTemplate.update(query);
     }
 
-    @Override
     public void delete(Booking entity) throws DataAccessException {
         String query = String.format("DELETE FROM bookings WHERE id = %d;", entity.getId());
         jdbcTemplate.update(query);
     }
 
-    @Override
     public Booking findByName(String name) throws DataAccessException {
         return null;
     }

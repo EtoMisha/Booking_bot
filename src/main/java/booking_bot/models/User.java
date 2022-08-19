@@ -6,6 +6,7 @@ public class User implements HasName {
     private Role role;
     private String login;
     private Campus campus;
+    private Long telegramId;
 
     @Override
     public String getName() {
@@ -46,6 +47,14 @@ public class User implements HasName {
 
     public void setCampus(Campus campus) {
         this.campus = campus;
+    }
+
+    public Long getTelegramId() {
+        return telegramId;
+    }
+
+    public void setTelegramId(Long telegramId) {
+        this.telegramId = telegramId;
     }
 
     @Override

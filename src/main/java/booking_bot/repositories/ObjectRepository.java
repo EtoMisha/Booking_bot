@@ -11,7 +11,7 @@ import javax.sql.DataSource;
 import java.sql.ResultSet;
 import java.util.List;
 
-public class ObjectRepository implements ConcreteRepository<BookObject> {
+public class ObjectRepository {
 
     private final JdbcTemplate jdbcTemplate;
 
@@ -31,12 +31,10 @@ public class ObjectRepository implements ConcreteRepository<BookObject> {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    @Override
     public List<BookObject> findAll() throws DataAccessException {
         return jdbcTemplate.query("SELECT * FROM booking_objects, types, campuses WHERE type_id = types.id AND campus_id = campuses.id;", ROW_MAPPER);
     }
 
-    @Override
     public void save(BookObject entity) throws DataAccessException {
         String query = String.format("INSERT into booking_objects (type_id, name, description, image, campus_id, floor, room_number)" +
                         "VALUES (%d, '%s', '%s', '%s', %d, %d, %d);",
@@ -45,7 +43,6 @@ public class ObjectRepository implements ConcreteRepository<BookObject> {
         jdbcTemplate.update(query);
     }
 
-    @Override
     public void update(BookObject entity) throws DataAccessException {
         String query = String.format("UPDATE booking_objects SET type_id = %d, name = '%s', description = '%s, " +
                         "image = '%s', campus_id = %d, floor = %d, room_number = %d WHERE id = %d;",
@@ -54,14 +51,17 @@ public class ObjectRepository implements ConcreteRepository<BookObject> {
         jdbcTemplate.update(query);
     }
 
-    @Override
     public void delete(BookObject entity) throws DataAccessException {
         String query = String.format("DELETE FROM booking_objects WHERE id = %d;", entity.getId());
         jdbcTemplate.update(query);
     }
 
-    @Override
     public BookObject findByName(String name) throws DataAccessException {
         return jdbcTemplate.queryForObject("SELECT * FROM booking_objects join types join campuses WHERE booking_objects.name = '" + name + "';", ROW_MAPPER);
+    }
+
+    public List<BookObject> findByType(String typeName) throws DataAccessException {
+        //TODO поправить запрос чтоб по types.name сверялся
+        return jdbcTemplate.query("SELECT * FROM booking_objects join types join campuses WHERE booking_objects.type_id = '" + typeName + "';", ROW_MAPPER);
     }
 }

@@ -2,24 +2,13 @@ package booking_bot.configs;
 
 import booking_bot.Bot;
 import booking_bot.commands.*;
-import booking_bot.models.User;
-import booking_bot.repositories.ConcreteRepository;
-import booking_bot.repositories.Repository;
-import booking_bot.models.Booking;
-import booking_bot.repositories.RepositoryImpl;
-import booking_bot.repositories.UserRepository;
+import booking_bot.repositories.Controller;
 import booking_bot.services.SendMessageService;
 import booking_bot.services.SendMessageServiceImpl;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
-import org.telegram.telegrambots.meta.TelegramBotsApi;
-import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
-import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
-
-import javax.sql.DataSource;
 
 @Configuration
 @PropertySource("classpath:bot.properties")
@@ -45,47 +34,39 @@ public class BotConfig {
        return bot;
     }
 
-//    @Bean
-//    TelegramBotsApi telegramBotsApi() throws TelegramApiException {
-//
-//        TelegramBotsApi telegramBotsApi = new TelegramBotsApi(DefaultBotSession.class);
-//        telegramBotsApi.registerBot(bot);
-//        return telegramBotsApi;
-//    }
-
     @Bean
     public CommandContainer commandContainer () {
         return new CommandContainer();
     }
 
     @Bean
-    public Command testCommand(SendMessageService sendMessageService, Repository repository, CommandContainer commandContainer) {
-        return new TestCommand(sendMessageService, repository, commandContainer);
+    public Command testCommand(SendMessageService sendMessageService, Controller controller, CommandContainer commandContainer) {
+        return new TestCommand(sendMessageService, controller, commandContainer);
     }
 
     @Bean
-    public Command userRedact(SendMessageService sendMessageService, Repository repository, CommandContainer commandContainer) {
-        return new UserRedact(sendMessageService, repository, commandContainer);
+    public Command userRedact(SendMessageService sendMessageService, Controller controller, CommandContainer commandContainer) {
+        return new UserRedact(sendMessageService, controller, commandContainer);
     }
 
     @Bean
-    public Command startCommand(SendMessageService sendMessageService, Repository repository, CommandContainer commandContainer) {
-        return new StartCommand(sendMessageService, repository, commandContainer);
+    public Command startCommand(SendMessageService sendMessageService, Controller controller, CommandContainer commandContainer) {
+        return new StartCommand(sendMessageService, controller, commandContainer);
     }
 
     @Bean
-    public Command addObject(SendMessageService sendMessageService, Repository repository, CommandContainer commandContainer) {
-        return new AddObject(sendMessageService, repository, commandContainer);
+    public Command addObject(SendMessageService sendMessageService, Controller controller, CommandContainer commandContainer) {
+        return new AddObject(sendMessageService, controller, commandContainer);
     }
 
     @Bean
-    public Command redactObject(SendMessageService sendMessageService, Repository repository, CommandContainer commandContainer) {
-        return new RedactObject(sendMessageService, repository, commandContainer);
+    public Command redactObject(SendMessageService sendMessageService, Controller controller, CommandContainer commandContainer) {
+        return new RedactObject(sendMessageService, controller, commandContainer);
     }
 
     @Bean
-    public Command newBooking(SendMessageService sendMessageService, Repository repository, CommandContainer commandContainer) {
-        return new NewBooking(sendMessageService, repository, commandContainer);
+    public Command newBooking(SendMessageService sendMessageService, Controller controller, CommandContainer commandContainer) {
+        return new NewBooking(sendMessageService, controller, commandContainer);
     }
 
 }

@@ -1,23 +1,20 @@
 package booking_bot.commands;
 
-import booking_bot.models.Campus;
 import booking_bot.models.User;
-import booking_bot.repositories.Repository;
+import booking_bot.repositories.Controller;
 import booking_bot.services.SendMessageService;
 import org.springframework.dao.DataAccessException;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.zip.DataFormatException;
 
 public class TestCommand extends CommandParent {
 
     private String commandName;
 
-    public TestCommand(SendMessageService sendMessageService, Repository repository, CommandContainer commandContainer) {
-        super(sendMessageService, repository, commandContainer);
+    public TestCommand(SendMessageService sendMessageService, Controller controller, CommandContainer commandContainer) {
+        super(sendMessageService, controller, commandContainer);
         this.commandName = "тест";
         commandContainer.add(commandName, this);
     }
@@ -47,7 +44,7 @@ public class TestCommand extends CommandParent {
             sendMessageService.send(chatId, "Привет");
 
             try {
-                List<String> buttons = getNames(repository.findAll(User.class));
+                List<String> buttons = getNames(controller.getUser().findAll());
                 System.out.println(Arrays.toString(buttons.toArray()));
                 sendMessageService.sendWithKeyboard(chatId, "Ок, а теперь выбери что-нибудь", buttons);
                 statusMap.put(chatId, "выбор с кнопки");

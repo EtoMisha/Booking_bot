@@ -3,20 +3,19 @@ package booking_bot.commands;
 import booking_bot.models.BookObject;
 import booking_bot.models.Campus;
 import booking_bot.models.Type;
-import booking_bot.repositories.Repository;
+import booking_bot.repositories.Controller;
 import booking_bot.services.SendMessageService;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class AddObject extends CommandParent {
 
-    private String commandName;
+    private final String commandName;
     private BookObject newObject;
 
-    public AddObject(SendMessageService sendMessageService, Repository repository, CommandContainer commandContainer) {
-        super(sendMessageService, repository, commandContainer);
+    public AddObject(SendMessageService sendMessageService, Controller controller, CommandContainer commandContainer) {
+        super(sendMessageService, controller, commandContainer);
         this.commandName = "Добавить объект";
         commandContainer.add(commandName, this);
         newObject = new BookObject();
@@ -42,24 +41,22 @@ public class AddObject extends CommandParent {
 
         System.out.println("- addObject: " + input + " status: " + status);
 
-
-
         if (status.equals("begin")) {
 
             isFinished = false;
-            List<String> campuses = getNames(repository.findAll(Campus.class));
+            List<String> campuses = getNames(controller.getCampus().findAll());
             sendMessageService.sendWithKeyboard(chatId, "Выберите кампус", campuses);
 
             statusMap.put(chatId, "Выбор кампуса");
         } else if (status.equals("Выбор кампуса")) {
-            newObject.setCampus((Campus)repository.findByName(input, Campus.class));
+            newObject.setCampus(controller.getCampus().findByName(input));
 
-            List<String> buttons = getNames(repository.findAll(Type.class));
+            List<String> buttons = getNames(controller.getType().findAll());
             sendMessageService.sendWithKeyboard(chatId, "Выберите категорию", buttons);
 
             statusMap.put(chatId, "Выбор категории");
         } else if (status.equals("Выбор категории")) {
-            newObject.setType((Type)repository.findByName(input, Type.class));
+            newObject.setType(controller.getType().findByName(input));
 
             sendMessageService.send(chatId, "Введите наименование объекта");
 
@@ -71,7 +68,7 @@ public class AddObject extends CommandParent {
             sendMessageService.send(chatId, "Вы добавили " + input);
 
             //TODO сохранить наименование объекта в базу
-            repository.save(newObject, newObject.getClass());
+            controller.getBookingObject().save(newObject);
 
             statusMap.put(chatId, "begin");
             isFinished = true;

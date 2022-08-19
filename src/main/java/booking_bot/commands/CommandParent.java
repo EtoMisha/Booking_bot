@@ -3,7 +3,7 @@ package booking_bot.commands;
 import booking_bot.models.BookObject;
 import booking_bot.models.HasName;
 import booking_bot.models.Type;
-import booking_bot.repositories.Repository;
+import booking_bot.repositories.Controller;
 import booking_bot.services.SendMessageService;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
@@ -14,7 +14,7 @@ import java.util.Map;
 
 public abstract class CommandParent implements Command {
     protected final SendMessageService sendMessageService;
-    protected final Repository repository;
+    protected final Controller controller;
     protected final CommandContainer commandContainer;
     protected Map<Long, String> statusMap;
 
@@ -23,9 +23,9 @@ public abstract class CommandParent implements Command {
     protected String input;
     protected String status;
 
-    public CommandParent(SendMessageService sendMessageService, Repository repository, CommandContainer commandContainer) {
+    public CommandParent(SendMessageService sendMessageService, Controller controller, CommandContainer commandContainer) {
         this.sendMessageService = sendMessageService;
-        this.repository = repository;
+        this.controller = controller;
         this.commandContainer = commandContainer;
         this.isFinished = false;
         this.statusMap = new HashMap<>();
@@ -47,10 +47,10 @@ public abstract class CommandParent implements Command {
         status = statusMap.get(chatId);
     }
 
-    protected List<String> getNames(List<Object> entityList) {
+    protected <T> List<String> getNames(List<T> entityList) {
         List<String> names = new ArrayList<>();
 
-        for (Object entity : entityList) {
+        for (T entity : entityList) {
             HasName hasName = (HasName) entity;
             names.add(hasName.getName());
         }
@@ -58,17 +58,18 @@ public abstract class CommandParent implements Command {
         return names;
     }
 
-    protected List<Object> objectsByType(Type type) {
-
-        List<BookObject> bookObjects = repository.findAll(BookObject.class);
-        List<Object> objectsOfType = new ArrayList<>();
-        for (BookObject obj : bookObjects) {
-            if (obj.getType().equals(type)) {
-                objectsOfType.add(obj);
-            }
-        }
-        return objectsOfType;
-    }
+//
+//    protected List<Object> objectsByType(Type type) {
+//
+//        List<BookObject> bookObjects = controller.findAll(BookObject.class);
+//        List<Object> objectsOfType = new ArrayList<>();
+//        for (BookObject obj : bookObjects) {
+//            if (obj.getType().equals(type)) {
+//                objectsOfType.add(obj);
+//            }
+//        }
+//        return objectsOfType;
+//    }
 
 //    public String getCommandName() {
 //        return commandName;
