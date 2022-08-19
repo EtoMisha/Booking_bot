@@ -90,11 +90,13 @@ public class UserRedact extends CommandParent {
                 }
             }
             if (isUser) {
-                sendMessageService.sendWithKeyboard(chatId, "Пользователь с ником " + userTmp.getLogin() + " найден. Вы можете удалить или отредактировать пользователя.", makeButtonsRed());
+                sendMessageService.sendWithKeyboard(chatId, "Пользователь с ником " + userTmp.getLogin() +
+                        " найден. Вы можете удалить или отредактировать пользователя.", makeButtonsRed());
                 statusMap.put(chatId, "Редактирование");
             }
             if (!isUser) {
-                sendMessageService.sendWithKeyboard(chatId, "Пользователь c ником " + userTmp.getLogin() + " не существует. Вы можете добавить пользователя.", makeButtonsAdd());
+                sendMessageService.sendWithKeyboard(chatId, "Пользователь c ником " + userTmp.getLogin() +
+                        " не существует. Вы можете добавить пользователя.", makeButtonsAdd());
                 statusMap.put(chatId, "Добавление");
             }
 
@@ -142,9 +144,6 @@ public class UserRedact extends CommandParent {
         } else if (status.equals("Кампус")) {
             userTmp.setCampus(controller.getCampus().findByName(input));
             if (flagRedact){
-                // update
-                //repository.update(userTmp, userTmp.getClass());
-
                 sendMessageService.send(chatId, "Пользователь отредактирован" +'\n' + "логин: " + userTmp.getLogin() + '\n' + "имя: " + userTmp.getName() + '\n' + "кампус: " + userTmp.getCampus() + '\n' + "роль: " + userTmp.getRole());
                 controller.getUser().update(userTmp);
                 statusMap.put(chatId, "begin");
@@ -159,7 +158,6 @@ public class UserRedact extends CommandParent {
 
             userTmp.setRole(controller.getRole().findByName(input));
             if (flagRedact) {
-                // update
                 sendMessageService.send(chatId, "Пользователь отредактирован" +'\n' + "логин: " + userTmp.getLogin() + '\n' + "имя: " + userTmp.getName() + '\n' + "кампус: " + userTmp.getCampus() + '\n' + "роль: " + userTmp.getRole());
                 controller.getUser().update(userTmp);
                 flagRedact = false;

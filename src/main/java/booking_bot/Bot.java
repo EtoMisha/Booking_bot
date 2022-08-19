@@ -1,9 +1,8 @@
 package booking_bot;
 
+
 import booking_bot.commands.Command;
 import booking_bot.commands.CommandContainer;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
