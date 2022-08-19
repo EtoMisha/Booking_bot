@@ -48,7 +48,7 @@ public class StartCommand extends CommandParent {
             try {
                 userTmp = controller.getUser().findByTelegram(chatId);
                 SendMessage send = new SendMessage(chatId.toString(), "Привет, "+ userTmp.getName());
-//                send.setReplyMarkup(studentKeyboard());
+                send.setReplyMarkup(studentKeyboard());
                 sendMessageService.sendCustom(send);
 
                 statusMap.put(chatId, "begin");
