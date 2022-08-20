@@ -12,11 +12,11 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.Keyboard
 import java.util.ArrayList;
 import java.util.List;
 
-public class adminStartCommand extends CommandParent {
+public class AdminStartCommand extends CommandParent {
 
     private User userTmp;
     private String password = "Password"; // Временный пароль
-    public adminStartCommand(SendMessageService sendMessageService, Controller controller, CommandContainer commandContainer) {
+    public AdminStartCommand(SendMessageService sendMessageService, Controller controller, CommandContainer commandContainer) {
         super(sendMessageService, controller, commandContainer);
         commandContainer.add("/admin", this);
         userTmp = new User();

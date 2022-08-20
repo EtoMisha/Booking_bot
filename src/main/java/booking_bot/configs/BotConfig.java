@@ -55,7 +55,7 @@ public class BotConfig {
 
     @Bean
     public Command adminStartCommand(SendMessageService sendMessageService, Controller controller, CommandContainer commandContainer) {
-        return new adminStartCommand(sendMessageService, controller, commandContainer);
+        return new AdminStartCommand(sendMessageService, controller, commandContainer);
     }
 
     @Bean
