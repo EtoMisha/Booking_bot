@@ -3,6 +3,7 @@ package booking_bot.commands;
 import booking_bot.models.BookObject;
 import booking_bot.models.Campus;
 import booking_bot.models.Type;
+import booking_bot.models.User;
 import booking_bot.repositories.Controller;
 import booking_bot.services.SendMessageService;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -31,6 +32,8 @@ public class AddObject extends CommandParent {
      */
     @Override
     public boolean execute(Update update, boolean begin) {
+
+        boolean isObject = false;
 
         prepare(update);
         if (begin) {
@@ -61,11 +64,26 @@ public class AddObject extends CommandParent {
 
             statusMap.put(chatId, "Ввод наименования объекта");
         } else if (status.equals("Ввод наименования объекта")) {
-            newObject.setName(input);
-            sendMessageService.send(chatId, "Вы добавили " + input);
+            newObject.setName(makeStr(input));
 
-            sendMessageService.send(chatId, "Введите описание объекта");
-            statusMap.put(chatId, "Ввод описания объекта");
+            List<BookObject> objectsList = controller.getBookingObject().findAll();
+
+            for(BookObject obj : objectsList) {
+                if (obj.getName().equals(makeStr(input)) && obj.getCampus().getName().equals(newObject.getCampus().getName())) {
+                    isObject = true;
+                }
+            }
+            if (isObject) {
+                sendMessageService.send(chatId, "Объект " + newObject.getName() + " уже существует. Вы можете удалить или отредактировать его.");
+                statusMap.put(chatId, "begin");
+                isFinished = true;
+            }
+            if (!isObject) {
+                sendMessageService.send(chatId, "Вы добавили " + input);
+                sendMessageService.send(chatId, "Введите описание объекта");
+                statusMap.put(chatId, "Ввод описания объекта");
+            }
+
         } else if (status.equals("Ввод описания объекта")) {
             newObject.setDescription(input);
             sendMessageService.send(chatId, "Вы добавили описание " + newObject.getName());
@@ -76,6 +94,10 @@ public class AddObject extends CommandParent {
         }
 
         return isFinished;
+    }
+
+    public String makeStr(String inputStr){
+        return (inputStr.substring(0,1).toUpperCase()+inputStr.substring(1).toLowerCase());
     }
 
     @Override

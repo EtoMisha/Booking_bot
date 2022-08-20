@@ -10,6 +10,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class UserRedact extends CommandParent {
 
@@ -181,6 +182,10 @@ public class UserRedact extends CommandParent {
         }
 
             return isFinished;
+        }
+
+        public String makeStr(String inputStr){
+            return (inputStr.substring(0,1).toUpperCase()+inputStr.substring(1).toLowerCase());
         }
 
         @Override
