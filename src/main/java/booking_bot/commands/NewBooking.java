@@ -34,7 +34,7 @@ public class NewBooking extends CommandParent {
         commandContainer.add(commandName, this);
         bookObject = new BookObject();
         booking = new Booking();
-        user = new User();
+
     }
 
     public boolean execute(Update update, boolean begin) {
@@ -44,11 +44,14 @@ public class NewBooking extends CommandParent {
             statusMap.put(chatId, status);
         }
 
+        user = controller.getUser().findByTelegram(chatId);
+
         DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH.mm");
         List<String> buttons;
 
         if (status.equals("begin")) {
             isFinished = false;
+            //TODO показывать только категории внутри кампуса, придутся в таблицу types добавить ссылку
             buttons = getNames(controller.getType().findAll());
             sendMessageService.sendWithKeyboard(chatId, "Выберите категорию", buttons);
             statusMap.put(chatId, "Выбор объекта");
@@ -64,7 +67,6 @@ public class NewBooking extends CommandParent {
             } else {
                 sendMessageService.send(chatId, "Выберите что забронировать:");
                 for (BookObject object : bookObjectList) {
-                    System.out.println("-- IMAGE " + bookObject.getImage());
                     if (object.getImage().equals("null")) {
                         SendMessage sendMessage = new SendMessage();
                         sendMessage.setChatId(chatId.toString());
@@ -90,7 +92,7 @@ public class NewBooking extends CommandParent {
         } else if (this.status.equals("Запрос даты")) {
 
             bookObject = controller.getBookingObject().findByName(input);
-            System.out.println("new booking" + bookObject);
+            System.out.println("new booking " + bookObject);
             SendMessage send = new SendMessage();
 
             send.setChatId(chatId.toString());
@@ -140,29 +142,30 @@ public class NewBooking extends CommandParent {
                 if (timeEnd.isBefore(timeStart)) {
                     sendMessageService.send(chatId, "Время окончания не должно быть раньше времени начала.\nВведите время окончания снова");
                     statusMap.put(chatId, "Ввод времени окончания");
+                } else if (!checkSlot(timeStart, timeEnd)) {
+                    sendMessageService.send(chatId, "Ваше время пересекается с уже имеющимся слотом.\nВведите время начала снова");
+                    statusMap.put(chatId, "Ввод времени начала");
                 } else {
-                    System.out.println("BOOKING OBJ " + bookObject);
-                    booking.setBookObject(bookObject);
-                    booking.setTimeStart(LocalDateTime.of(selectedDate, timeStart));
-                    booking.setTimeEnd(LocalDateTime.of(selectedDate, timeEnd));
-                    booking.setStatus(controller.getStatus().findByName("Занят"));
 
-                    booking.setUser(controller.getUser().findByTelegram(chatId));
-//                    sendMessageService.send(chatId, "Готово \uD83D\uDC4D \nЗабронировали " + bookObject.getName() + " на " + selectedDate.format(dateFormatter) + " с " + timeStart + " до " + timeEnd);
+                        booking.setBookObject(bookObject);
+                        booking.setTimeStart(LocalDateTime.of(selectedDate, timeStart));
+                        booking.setTimeEnd(LocalDateTime.of(selectedDate, timeEnd));
+                        booking.setStatus(controller.getStatus().findByName("Занят"));
 
+                        booking.setUser(user);
 
-                    try {
-                        System.out.println("BOOKING " + booking);
-                        System.out.println("BOOKING EXAMPLE " + controller.getBooking().findAll());
-                        controller.getBooking().save(booking);
+                        try {
+                            controller.getBooking().save(booking);
+                            sendMessageService.send(chatId, "Готово \uD83D\uDC4D \nЗабронировали на "
+                                    + selectedDate.format(dateFormatter) + " с " + timeStart + " до " + timeEnd
+                                    + ":\n" + bookObject.getName());
+                        } catch (DataAccessException e) {
+                            e.printStackTrace();
+                            sendMessageService.send(chatId, "Не получилось, ошибка в базе данных :(");
+                        }
 
-                        sendMessageService.send(chatId, "Готово \uD83D\uDC4D \nЗабронировали " + bookObject.getName() + " на " + selectedDate.format(dateFormatter) + " с " + timeStart + " до " + timeEnd);
-                    } catch (DataAccessException e) {
-                        sendMessageService.send(chatId, "Не получилось, ошибка в базе данных :(");
-                    }
-
-                    statusMap.put(chatId, "begin");
-                    isFinished = true;
+                        statusMap.put(chatId, "begin");
+                        isFinished = true;
                 }
 
             } catch (DateTimeParseException var7) {
@@ -192,32 +195,63 @@ public class NewBooking extends CommandParent {
             for(int j = 0; j < 7; ++j) {
                 InlineKeyboardButton button = new InlineKeyboardButton();
 
-                if (counter.isBefore(today) || !isFree(counter)) {
+                if (counter.isBefore(today)) {
                     button.setText("X");
                     button.setCallbackData("x");
                 } else {
                     button.setText(String.valueOf(counter.getDayOfMonth()));
                     button.setCallbackData(String.valueOf(counter.getDayOfMonth()));
                 }
-
                 keyboardButtonRow.add(button);
                 counter = counter.plusDays(1);
-
             }
-
             totalList.add(keyboardButtonRow);
         }
-
         inlineKeyboardMarkup.setKeyboard(totalList);
         return inlineKeyboardMarkup;
     }
 
-    private boolean isFree(LocalDate date) {
-        return  true;
+    private String getBookedSlots(LocalDate date) {
+        List<Booking> bookingList = null;
+        StringBuilder stringBuilder = new StringBuilder();
+        try {
+            bookingList = controller.getBooking().findByObject(bookObject);
+            for (Booking booking: bookingList) {
+                if (booking.getTimeStart().toLocalDate().equals(date)) {
+                    stringBuilder.append(booking.getTimeStart().toLocalTime())
+                            .append(" - ")
+                            .append(booking.getTimeEnd().toLocalTime())
+                            .append("\n");
+                }
+            }
+        } catch (DataAccessException e) {
+            e.printStackTrace();
+        }
+
+        if (bookingList == null) {
+            return null;
+        } else {
+            return stringBuilder.toString();
+        }
     }
 
-    private String getBookedSlots(LocalDate date) {
-        return  null;
+    private boolean checkSlot(LocalTime timeStart, LocalTime timeEnd) {
+        LocalTime start;
+        LocalTime end;
+
+        List<Booking> bookingList = controller.getBooking().findByObject(bookObject);
+        for (Booking booking : bookingList) {
+            start = booking.getTimeStart().toLocalTime();
+            end = booking.getTimeEnd().toLocalTime();
+            if (timeStart.isBefore(end) || timeEnd.isBefore(start)) {
+                System.out.println("start " + start);
+                System.out.println("end " + end);
+                System.out.println("selected: " + timeStart + " " + timeEnd);
+                return false;
+            }
+        }
+
+        return true;
     }
 
     private SendPhoto makeObjectMessage(Object object) {
