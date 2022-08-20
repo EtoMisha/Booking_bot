@@ -54,8 +54,10 @@ public class BotConfig {
     }
 
     @Bean
-    public Command addObject(SendMessageService sendMessageService, Controller controller, CommandContainer commandContainer) {
-        return new AddObject(sendMessageService, controller, commandContainer);
+    public Command addObject(SendMessageService sendMessageService, Controller controller, CommandContainer commandContainer, Bot bot) {
+        AddObject addObject = new AddObject(sendMessageService, controller, commandContainer);
+        addObject.setBot(bot);
+        return addObject;
     }
 
     @Bean
@@ -66,6 +68,11 @@ public class BotConfig {
     @Bean
     public Command newBooking(SendMessageService sendMessageService, Controller controller, CommandContainer commandContainer) {
         return new NewBooking(sendMessageService, controller, commandContainer);
+    }
+
+    @Bean
+    public Command MyBooking(SendMessageService sendMessageService, Controller controller, CommandContainer commandContainer) {
+        return new MyBooking(sendMessageService, controller, commandContainer);
     }
 
 }

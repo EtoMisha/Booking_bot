@@ -21,14 +21,14 @@ public class BookingRepository {
 //        booking.setTimeEnd(resultSet.getTimestamp("time_end").toLocalDateTime());
 //        booking.setStatus(new Status(resultSet.getInt("statuses.id"), resultSet.getString("statuses.name")));
 //
-//        BookObject bookObject = new BookObject();
-//        bookObject.setId(resultSet.getInt("booking_objects.id"));
+        BookObject bookObject = new BookObject();
+        bookObject.setId(resultSet.getInt("booking_object_id"));
 //        bookObject.setType(new Type(resultSet.getInt("types.id"), resultSet.getString("types.name")));
-//        bookObject.setName(resultSet.getString("booking_objects.name"));
+        bookObject.setName(resultSet.getString("name"));
 //        bookObject.setDescription(resultSet.getString("description"));
 //        bookObject.setImage(resultSet.getString("image"));
 //        bookObject.setCampus(new Campus(resultSet.getInt("campuses.id"), resultSet.getString("campuses.name")));
-//        booking.setBookObject(bookObject);
+        booking.setBookObject(bookObject);
 //
 //        User user = new User();
 //        user.setId(resultSet.getInt("users.id"));
@@ -42,7 +42,6 @@ public class BookingRepository {
         booking.setTimeStart(resultSet.getTimestamp("time_start").toLocalDateTime());
         booking.setTimeEnd(resultSet.getTimestamp("time_end").toLocalDateTime());
         booking.setStatus(null);
-        booking.setBookObject(null);
         booking.setUser(null);
 
         return booking;
@@ -67,6 +66,11 @@ public class BookingRepository {
 
     public List<Booking> findByObject (BookObject object) throws DataAccessException {
         String query = String.format("SELECT * FROM bookings WHERE booking_object_id = %d;", object.getId());
+        return jdbcTemplate.query(query, ROW_MAPPER);
+    }
+
+    public List<Booking> findByUser (User user) throws DataAccessException {
+        String query = String.format("SELECT * FROM bookings, booking_objects WHERE user_id = %d AND booking_object_id = booking_objects.id;", user.getId());
         return jdbcTemplate.query(query, ROW_MAPPER);
     }
 

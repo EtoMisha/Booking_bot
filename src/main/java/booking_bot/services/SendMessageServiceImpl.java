@@ -26,10 +26,7 @@ public class SendMessageServiceImpl implements SendMessageService {
         SendMessage send = new SendMessage();
         send.setChatId(chatId.toString());
         send.setText(message);
-        //TODO проверить по chatId роль пользователя и показывать соответстующую клавиатуру
-        //TODO или если такого chatID вообще нет - вообще без кнопок
-//        send.setReplyMarkup(adminKeyboard());
-//        send.setReplyMarkup(studentKeyboard());
+
 
         send.setParseMode("markdown");
        
@@ -38,6 +35,7 @@ public class SendMessageServiceImpl implements SendMessageService {
         } catch (TelegramApiException e) {
             e.printStackTrace();
         }
+
     }
 
     @Override
@@ -72,43 +70,43 @@ public class SendMessageServiceImpl implements SendMessageService {
             e.printStackTrace();
         }
     }
-
-    private ReplyKeyboardMarkup adminKeyboard() {
-        KeyboardRow keyboardRow1 = new KeyboardRow();
-        keyboardRow1.add("Забронировать");
-        keyboardRow1.add("Отмена бронирования");
-
-        KeyboardRow keyboardRow2 = new KeyboardRow();
-        keyboardRow2.add("Добавить объект");
-//        keyboardRow2.add("Редактировать каталог");
-        keyboardRow2.add("Редактировать объект");
-        keyboardRow2.add("Управление пользователем");
-
-        ArrayList<KeyboardRow> keyBoardRows = new ArrayList<>();
-        keyBoardRows.add(keyboardRow1);
-        keyBoardRows.add(keyboardRow2);
-
-        ReplyKeyboardMarkup replyKeyboard = new ReplyKeyboardMarkup();
-        replyKeyboard.setKeyboard(keyBoardRows);
-        replyKeyboard.setResizeKeyboard(true);
-
-        return replyKeyboard;
-    }
-
-    private ReplyKeyboardMarkup studentKeyboard() {
-        KeyboardRow keyboardRow1 = new KeyboardRow();
-        keyboardRow1.add("Забронировать");
-        keyboardRow1.add("Отмена бронирования");
-
-        ArrayList<KeyboardRow> keyBoardRows = new ArrayList<>();
-        keyBoardRows.add(keyboardRow1);
-
-        ReplyKeyboardMarkup replyKeyboard = new ReplyKeyboardMarkup();
-        replyKeyboard.setKeyboard(keyBoardRows);
-        replyKeyboard.setResizeKeyboard(true);
-
-        return replyKeyboard;
-    }
+//
+//    private ReplyKeyboardMarkup adminKeyboard() {
+//        KeyboardRow keyboardRow1 = new KeyboardRow();
+//        keyboardRow1.add("Забронировать");
+//        keyboardRow1.add("Мои бронирования");
+//
+//        KeyboardRow keyboardRow2 = new KeyboardRow();
+//        keyboardRow2.add("Добавить объект");
+////        keyboardRow2.add("Редактировать каталог");
+//        keyboardRow2.add("Редактировать объект");
+//        keyboardRow2.add("Управление пользователем");
+//
+//        ArrayList<KeyboardRow> keyBoardRows = new ArrayList<>();
+//        keyBoardRows.add(keyboardRow1);
+//        keyBoardRows.add(keyboardRow2);
+//
+//        ReplyKeyboardMarkup replyKeyboard = new ReplyKeyboardMarkup();
+//        replyKeyboard.setKeyboard(keyBoardRows);
+//        replyKeyboard.setResizeKeyboard(true);
+//
+//        return replyKeyboard;
+//    }
+//
+//    private ReplyKeyboardMarkup studentKeyboard() {
+//        KeyboardRow keyboardRow1 = new KeyboardRow();
+//        keyboardRow1.add("Забронировать");
+//        keyboardRow1.add("Мои бронирования");
+//
+//        ArrayList<KeyboardRow> keyBoardRows = new ArrayList<>();
+//        keyBoardRows.add(keyboardRow1);
+//
+//        ReplyKeyboardMarkup replyKeyboard = new ReplyKeyboardMarkup();
+//        replyKeyboard.setKeyboard(keyBoardRows);
+//        replyKeyboard.setResizeKeyboard(true);
+//
+//        return replyKeyboard;
+//    }
 
     private InlineKeyboardMarkup inlineKeyboard(List<String> buttonsList) {
 
