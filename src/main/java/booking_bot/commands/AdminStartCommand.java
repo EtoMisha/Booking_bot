@@ -12,12 +12,13 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.Keyboard
 import java.util.ArrayList;
 import java.util.List;
 
-public class StartCommand extends CommandParent {
+public class AdminStartCommand extends CommandParent {
 
     private User userTmp;
-    public StartCommand(SendMessageService sendMessageService, Controller controller, CommandContainer commandContainer) {
+    private String password = "Password"; // Временный пароль
+    public AdminStartCommand(SendMessageService sendMessageService, Controller controller, CommandContainer commandContainer) {
         super(sendMessageService, controller, commandContainer);
-        commandContainer.add("/start", this);
+        commandContainer.add("/admin", this);
         userTmp = new User();
     }
 
@@ -42,27 +43,29 @@ public class StartCommand extends CommandParent {
             status = "begin";
             statusMap.put(chatId, status);
         }
-
         if (status.equals("begin")) {
-
-            try {
-                userTmp = controller.getUser().findByTelegram(chatId);
-                SendMessage send = new SendMessage(chatId.toString(), "Привет, "+ userTmp.getName() + ". Что будем бронировать?");
-
-                if (userTmp.getRole().getName().equals("Студент")) {
-                    send.setReplyMarkup(studentKeyboard());
-                }
-                if (userTmp.getRole().getName().equals("Администратор")){
+            sendMessageService.send(chatId, "Введи пароль:");
+            statusMap.put(chatId, "Ввод пароля");
+        } else if (status.equals("Ввод пароля")) {
+            if (input.equals(password)) {
+                try {
+                    userTmp = controller.getUser().findByTelegram(chatId);
+                    SendMessage send = new SendMessage(chatId.toString(), "Привет, " + userTmp.getName() + ". Что будем делать?");
                     send.setReplyMarkup(adminKeyboard());
+
+                    sendMessageService.sendCustom(send);
+                    statusMap.put(chatId, "begin");
+//                    isFinished = true;
+                } catch (DataAccessException ex) {
+                    sendMessageService.send(chatId, "Привет, это бот Школы 21 для бронирования помещений инвентаря и вообще всего.\n");
+                    sendMessageService.send(chatId, "Давай зарегистрируем тебя. Введи логин");
+                    statusMap.put(chatId, "Ввод логина");
                 }
-                sendMessageService.sendCustom(send);
+            } else {
+                sendMessageService.send(chatId, "Упссс... Пароль неверный. Лучше начни с команды /start");
 
                 statusMap.put(chatId, "begin");
 //                isFinished = true;
-            } catch (DataAccessException ex) {
-                sendMessageService.send(chatId, "Привет, это бот Школы 21 для бронирования помещений инвентаря и вообще всего.\n");
-                sendMessageService.send(chatId, "Давай зарегистрируем тебя. Введи логин");
-                statusMap.put(chatId, "Ввод логина");
             }
 
         } else if (status.equals("Ввод логина")) {
@@ -76,27 +79,30 @@ public class StartCommand extends CommandParent {
                 }
             }
             if (isUser) {
-                sendMessageService.send(chatId, "Пользователь " + userTmp.getLogin() + " авторизован. Можешь бронировать.");
+                sendMessageService.send(chatId, "Пользователь " + userTmp.getLogin() + " авторизован. Выбери, что хочешь сделать");
             }
             if (!isUser) {
-                sendMessageService.send(chatId, "Введите имя пользователя");
+                sendMessageService.send(chatId, "Введи имя пользователя");
                 statusMap.put(chatId, "Ввод имени");
             }
+
+
         } else if (status.equals("Ввод имени")) {
             userTmp.setName(input);
             sendMessageService.sendWithKeyboard(chatId, "Ок, а теперь выберите кампус", makeButtonsCampus());
             statusMap.put(chatId, "Кампус");
 
+
         } else if (status.equals("Кампус")) {
             userTmp.setCampus(controller.getCampus().findByName(input));
-            userTmp.setRole(controller.getRole().findByName("студент"));
+            userTmp.setRole(controller.getRole().findByName("Администратор"));
+
             userTmp.setTelegramId(chatId);
             controller.getUser().save(userTmp);
-            sendMessageService.send(chatId, "Вы успешно зарегистрированы:"
+            sendMessageService.send(chatId, "Ты успешно зарегистрирован:"
                     + '\n' + "логин: " + userTmp.getLogin() + '\n'
                     + "имя: " + userTmp.getName() + '\n' + "кампус: " + userTmp.getCampus() + '\n'
                     + "роль: " + userTmp.getRole());
-
             statusMap.put(chatId, "begin");
             isFinished = true;
         }
@@ -106,13 +112,13 @@ public class StartCommand extends CommandParent {
 
     @Override
     public String getCommandName() {
-        return "/start";
+        return "/admin";
     }
 
     private ReplyKeyboardMarkup adminKeyboard() {
         KeyboardRow keyboardRow1 = new KeyboardRow();
         keyboardRow1.add("Забронировать");
-        keyboardRow1.add("Мои бронирования");
+        keyboardRow1.add("Отмена бронирования");
 
         KeyboardRow keyboardRow2 = new KeyboardRow();
         keyboardRow2.add("Добавить объект");
@@ -134,7 +140,7 @@ public class StartCommand extends CommandParent {
     private ReplyKeyboardMarkup studentKeyboard() {
         KeyboardRow keyboardRow1 = new KeyboardRow();
         keyboardRow1.add("Забронировать");
-        keyboardRow1.add("Мои бронирования");
+        keyboardRow1.add("Отмена бронирования");
 
         ArrayList<KeyboardRow> keyBoardRows = new ArrayList<>();
         keyBoardRows.add(keyboardRow1);
@@ -147,3 +153,5 @@ public class StartCommand extends CommandParent {
     }
 
 }
+
+

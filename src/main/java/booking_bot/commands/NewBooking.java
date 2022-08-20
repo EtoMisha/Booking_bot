@@ -97,7 +97,7 @@ public class NewBooking extends CommandParent {
             SendMessage send = new SendMessage();
 
             send.setChatId(chatId.toString());
-            send.setText("Выберите дату");
+            send.setText("Выберите дату бронирования:");
             send.setReplyMarkup(makeCalendar());
             sendMessageService.sendCustom(send);
             statusMap.put(chatId, "Запрос времени");
