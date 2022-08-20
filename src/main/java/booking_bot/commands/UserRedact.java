@@ -43,6 +43,7 @@ public class UserRedact extends CommandParent {
         return (buttonsRed);
     }
     public List<String> makeButtonsAdd() {
+
         List<String> buttonsAdd = new ArrayList<>();
         buttonsAdd.add("Добавить");
         return (buttonsAdd);
@@ -64,8 +65,6 @@ public class UserRedact extends CommandParent {
 
         boolean isUser = false;
 
-//        userTmp = new User(); // ID ???
-        //boolean user = true; //  получить данные из БД
         prepare(update);
         if (begin) {
             status = "begin";
@@ -81,11 +80,11 @@ public class UserRedact extends CommandParent {
             statusMap.put(chatId, "Ввод логина");
         } else if (status.equals("Ввод логина")) {
 
-            userTmp.setLogin(input);
+            userTmp.setLogin(input.toLowerCase());
             List<User> usersList = controller.getUser().findAll();
 
             for(User obj : usersList) {
-                if (obj.getLogin().equals(input)) {
+                if (obj.getLogin().equals(input.toLowerCase())) {
                     isUser = true;
                     userTmp = obj;
                 }
@@ -145,7 +144,9 @@ public class UserRedact extends CommandParent {
         } else if (status.equals("Кампус")) {
             userTmp.setCampus(controller.getCampus().findByName(input));
             if (flagRedact){
-                sendMessageService.send(chatId, "Пользователь отредактирован" +'\n' + "логин: " + userTmp.getLogin() + '\n' + "имя: " + userTmp.getName() + '\n' + "кампус: " + userTmp.getCampus() + '\n' + "роль: " + userTmp.getRole());
+                sendMessageService.send(chatId, "Пользователь отредактирован" +'\n'
+                        + "логин: " + userTmp.getLogin() + '\n' + "имя: " + userTmp.getName() + '\n'
+                        + "кампус: " + userTmp.getCampus() + '\n' + "роль: " + userTmp.getRole());
                 controller.getUser().update(userTmp);
                 statusMap.put(chatId, "begin");
                 flagRedact = false;
@@ -159,7 +160,9 @@ public class UserRedact extends CommandParent {
 
             userTmp.setRole(controller.getRole().findByName(input));
             if (flagRedact) {
-                sendMessageService.send(chatId, "Пользователь отредактирован" +'\n' + "логин: " + userTmp.getLogin() + '\n' + "имя: " + userTmp.getName() + '\n' + "кампус: " + userTmp.getCampus() + '\n' + "роль: " + userTmp.getRole());
+                sendMessageService.send(chatId, "Пользователь отредактирован" +'\n'
+                        + "логин: " + userTmp.getLogin() + '\n' + "имя: " + userTmp.getName() + '\n'
+                        + "кампус: " + userTmp.getCampus() + '\n' + "роль: " + userTmp.getRole());
                 controller.getUser().update(userTmp);
                 flagRedact = false;
             } else {
@@ -176,7 +179,6 @@ public class UserRedact extends CommandParent {
 
 
             }
-//            repository.save(userTmp, userTmp.getClass());
             statusMap.put(chatId, "begin");
             isFinished = true;
         }

@@ -118,8 +118,6 @@ public class RedactObject extends CommandParent {
         return isFinished;
     }
 
-
-
     @Override
     public String getCommandName() {
         return commandName;
