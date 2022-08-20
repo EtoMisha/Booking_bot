@@ -12,7 +12,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public abstract class CommandParent implements Command {
+public abstract class
+CommandParent implements Command {
     protected final SendMessageService sendMessageService;
     protected final Controller controller;
     protected final CommandContainer commandContainer;

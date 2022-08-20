@@ -16,9 +16,9 @@ public class BotConfig {
 //    @Autowired
 //    CommandContainer commandContainer;
 
-    @Value("${test.username}")
+    @Value("${botOb.username}")
     private String username;
-    @Value("${test.token}")
+    @Value("${botOb.token}")
     private String token;
 
     @Bean
@@ -51,6 +51,11 @@ public class BotConfig {
     @Bean
     public Command startCommand(SendMessageService sendMessageService, Controller controller, CommandContainer commandContainer) {
         return new StartCommand(sendMessageService, controller, commandContainer);
+    }
+
+    @Bean
+    public Command adminStartCommand(SendMessageService sendMessageService, Controller controller, CommandContainer commandContainer) {
+        return new adminStartCommand(sendMessageService, controller, commandContainer);
     }
 
     @Bean
