@@ -16,9 +16,9 @@ public class BotConfig {
 //    @Autowired
 //    CommandContainer commandContainer;
 
-    @Value("${botSt.username}")
+    @Value("${test.username}")
     private String username;
-    @Value("${botSt.token}")
+    @Value("${test.token}")
     private String token;
 
     @Bean
