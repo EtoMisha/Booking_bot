@@ -58,7 +58,7 @@ public class StartCommand extends CommandParent {
                 sendMessageService.sendCustom(send);
 
                 statusMap.put(chatId, "begin");
-//                isFinished = true;
+
             } catch (DataAccessException ex) {
                 sendMessageService.send(chatId, "Привет, это бот Школы 21 для бронирования помещений инвентаря и вообще всего.\n");
                 sendMessageService.send(chatId, "Давай зарегистрируем тебя. Введи логин");
@@ -92,10 +92,13 @@ public class StartCommand extends CommandParent {
             userTmp.setRole(controller.getRole().findByName("студент"));
             userTmp.setTelegramId(chatId);
             controller.getUser().save(userTmp);
-            sendMessageService.send(chatId, "Вы успешно зарегистрированы:"
+
+            SendMessage send = new SendMessage(chatId.toString(), "Вы успешно зарегистрированы:"
                     + '\n' + "логин: " + userTmp.getLogin() + '\n'
                     + "имя: " + userTmp.getName() + '\n' + "кампус: " + userTmp.getCampus() + '\n'
                     + "роль: " + userTmp.getRole());
+            send.setReplyMarkup(studentKeyboard());
+            sendMessageService.sendCustom(send);
 
             statusMap.put(chatId, "begin");
             isFinished = true;

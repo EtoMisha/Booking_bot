@@ -55,7 +55,7 @@ public class AdminStartCommand extends CommandParent {
 
                     sendMessageService.sendCustom(send);
                     statusMap.put(chatId, "begin");
-//                    isFinished = true;
+
                 } catch (DataAccessException ex) {
                     sendMessageService.send(chatId, "Привет, это бот Школы 21 для бронирования помещений инвентаря и вообще всего.\n");
                     sendMessageService.send(chatId, "Давай зарегистрируем тебя. Введи логин");
@@ -65,7 +65,7 @@ public class AdminStartCommand extends CommandParent {
                 sendMessageService.send(chatId, "Упссс... Пароль неверный. Лучше начни с команды /start");
 
                 statusMap.put(chatId, "begin");
-//                isFinished = true;
+
             }
 
         } else if (status.equals("Ввод логина")) {
@@ -99,10 +99,14 @@ public class AdminStartCommand extends CommandParent {
 
             userTmp.setTelegramId(chatId);
             controller.getUser().save(userTmp);
-            sendMessageService.send(chatId, "Ты успешно зарегистрирован:"
+
+            SendMessage send = new SendMessage(chatId.toString(), "Ты успешно зарегистрирован:"
                     + '\n' + "логин: " + userTmp.getLogin() + '\n'
                     + "имя: " + userTmp.getName() + '\n' + "кампус: " + userTmp.getCampus() + '\n'
                     + "роль: " + userTmp.getRole());
+            send.setReplyMarkup(adminKeyboard());
+            sendMessageService.sendCustom(send);
+
             statusMap.put(chatId, "begin");
             isFinished = true;
         }
