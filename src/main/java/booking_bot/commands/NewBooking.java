@@ -67,7 +67,8 @@ public class NewBooking extends CommandParent {
             } else {
                 sendMessageService.send(chatId, "Выберите что забронировать:");
                 for (BookObject object : bookObjectList) {
-                    if (object.getImage().equals("null")) {
+                    System.out.println("GET IMAGE" + object.getImage());
+                    if (object.getImage() == null || object.getImage().equals("null") || object.getImage().equals("")) {
                         SendMessage sendMessage = new SendMessage();
                         sendMessage.setChatId(chatId.toString());
                         sendMessage.setParseMode("markdown");

@@ -19,7 +19,7 @@ public class RedactObject extends CommandParent {
         super(sendMessageService, controller, commandContainer);
         this.commandName = "Редактировать объект";
         commandContainer.add(commandName, this);
-        tmpObject = new BookObject();
+//        tmpObject = new BookObject();
     }
 
 
@@ -45,13 +45,6 @@ public class RedactObject extends CommandParent {
 //        BookObject tmpObject = new BookObject();
 
         if (status.equals("begin")) {
-            isFinished = false;
-            List<String> campuses = getNames(controller.getCampus().findAll());
-            sendMessageService.sendWithKeyboard(chatId, "Выберите кампус", campuses);
-
-            statusMap.put(chatId, "Выбор кампуса");
-        } else if (status.equals("Выбор кампуса")) {
-            tmpObject.setCampus(controller.getCampus().findByName(input));
 
             List<String> buttons = getNames(controller.getType().findAll());
             sendMessageService.sendWithKeyboard(chatId, "Выберите категорию", buttons);
@@ -64,46 +57,45 @@ public class RedactObject extends CommandParent {
 
             statusMap.put(chatId, "Выбор объекта");
         } else if (status.equals("Выбор объекта")) {
-            tmpObject.setName(input);
+//            tmpObject.setName(input);
+
+            tmpObject = controller.getBookingObject().findByName(input);
 
             List<String> actions = new ArrayList<>();
-            actions.add("Изменить наименование объекта");
-            actions.add("Изменить описание объекта");
-            actions.add("Удалить объект");
-
+            actions.add("Изменить название");
+            actions.add("Изменить описание");
+            actions.add("Удалить");
             sendMessageService.sendWithKeyboard(chatId, "Выберите действие", actions);
 
             statusMap.put(chatId, "Выбор действия");
         } else if (status.equals("Выбор действия")) {
-            if (input.equals("Изменить наименование объекта")) {
-                sendMessageService.send(chatId, "Введите новое наименование объекта");
+            if (input.equals("Изменить название")) {
+                sendMessageService.send(chatId, "Введите новое название");
                 statusMap.put(chatId, "Изменение наименование объекта");
             }
-            else if (input.equals("Изменить описание объекта")) {
-                sendMessageService.send(chatId, "Введите новое описание объекта");
+            else if (input.equals("Изменить описание")) {
+                sendMessageService.send(chatId, "Введите новое описание");
                 statusMap.put(chatId, "Изменение описание объекта");
             }
-            else if (input.equals("Удалить объект")) {
+            else if (input.equals("Удалить")) {
                 sendMessageService.send(chatId, "Вы удалили объект " + tmpObject.getName());
                 statusMap.put(chatId, "Удаление объекта");
             }
         } else if (status.equals("Изменение наименование объекта")) {
 
             tmpObject.setName(input);
+
+            System.out.println("EDIT OBJEct: " + tmpObject + " id " + tmpObject.getId());
             controller.getBookingObject().update(tmpObject);
-            //TODO сохранить новое наименование объекта в базу
             sendMessageService.send(chatId, "Вы изменили на " + input);
 
             statusMap.put(chatId, "begin");
-            isFinished = true;
         } else if (status.equals("Изменение описание объекта")) {
             tmpObject.setDescription(input);
             controller.getBookingObject().update(tmpObject);
-            //TODO сохранить новое описание объекта в базу
             sendMessageService.send(chatId, "Вы изменили описание объекта " + tmpObject.getName());
 
             statusMap.put(chatId, "begin");
-            isFinished = true;
         } else if (status.equals("Удаление объекта")) {
             sendMessageService.send(chatId, "Объект " + tmpObject.getName() + " удален");
             controller.getBookingObject().delete(tmpObject);

@@ -47,6 +47,32 @@ public class BookingRepository {
         return booking;
     };
 
+    private final RowMapper<Booking> ROW_MAPPER_OBJECT = (ResultSet resultSet, int rowNum) -> {
+        Booking booking = new Booking();
+//        booking.setId(resultSet.getInt("bookings.id"));
+//        booking.setTimeStart(resultSet.getTimestamp("time_start").toLocalDateTime());
+//        booking.setTimeEnd(resultSet.getTimestamp("time_end").toLocalDateTime());
+//        booking.setStatus(new Status(resultSet.getInt("statuses.id"), resultSet.getString("statuses.name")));
+//
+        booking.setBookObject(null);
+//
+//        User user = new User();
+//        user.setId(resultSet.getInt("users.id"));
+//        user.setName(resultSet.getString("users.name"));
+//        user.setRole(new Role(resultSet.getInt("roles.id"), resultSet.getString("roles.name")));
+//        user.setLogin(resultSet.getString("login"));
+//        user.setCampus(new Campus(resultSet.getInt("campuses.id"), resultSet.getString("campuses.name")));
+//        booking.setUser(user);
+
+        booking.setId(resultSet.getInt("bookings.id"));
+        booking.setTimeStart(resultSet.getTimestamp("time_start").toLocalDateTime());
+        booking.setTimeEnd(resultSet.getTimestamp("time_end").toLocalDateTime());
+        booking.setStatus(null);
+        booking.setUser(null);
+
+        return booking;
+    };
+
     public BookingRepository(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
@@ -66,7 +92,7 @@ public class BookingRepository {
 
     public List<Booking> findByObject (BookObject object) throws DataAccessException {
         String query = String.format("SELECT * FROM bookings WHERE booking_object_id = %d;", object.getId());
-        return jdbcTemplate.query(query, ROW_MAPPER);
+        return jdbcTemplate.query(query, ROW_MAPPER_OBJECT);
     }
 
     public List<Booking> findByUser (User user) throws DataAccessException {

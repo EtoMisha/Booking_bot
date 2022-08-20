@@ -25,9 +25,6 @@ import java.util.List;
 public class MyBooking extends CommandParent {
     private String commandName = "Мои бронирования";
 
-    private LocalDate selectedDate;
-    private LocalTime timeStart;
-    private LocalTime timeEnd;
     private BookObject bookObject;
     private Booking booking;
     private User user;
