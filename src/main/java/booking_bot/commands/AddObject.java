@@ -1,25 +1,37 @@
 package booking_bot.commands;
 
+import booking_bot.Bot;
 import booking_bot.models.BookObject;
 import booking_bot.models.Campus;
 import booking_bot.models.Type;
 import booking_bot.models.User;
 import booking_bot.repositories.Controller;
 import booking_bot.services.SendMessageService;
+import org.telegram.telegrambots.facilities.filedownloader.TelegramFileDownloader;
+import org.telegram.telegrambots.meta.api.methods.GetFile;
+import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
+import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 public class AddObject extends CommandParent {
 
     private final String commandName;
     private BookObject newObject;
+    private Bot bot;
 
     public AddObject(SendMessageService sendMessageService, Controller controller, CommandContainer commandContainer) {
         super(sendMessageService, controller, commandContainer);
         this.commandName = "Добавить объект";
         commandContainer.add(commandName, this);
         newObject = new BookObject();
+    }
+
+    public void setBot(Bot bot) {
+        this.bot = bot;
     }
 
     /*
@@ -60,7 +72,7 @@ public class AddObject extends CommandParent {
         } else if (status.equals("Выбор категории")) {
             newObject.setType(controller.getType().findByName(input));
 
-            sendMessageService.send(chatId, "Введите наименование объекта");
+            sendMessageService.send(chatId, "Введите название");
 
             statusMap.put(chatId, "Ввод наименования объекта");
         } else if (status.equals("Ввод наименования объекта")) {
@@ -79,18 +91,62 @@ public class AddObject extends CommandParent {
                 isFinished = true;
             }
             if (!isObject) {
-                sendMessageService.send(chatId, "Вы добавили " + input);
-                sendMessageService.send(chatId, "Введите описание объекта");
+                sendMessageService.send(chatId, "Введите описание");
                 statusMap.put(chatId, "Ввод описания объекта");
             }
 
         } else if (status.equals("Ввод описания объекта")) {
             newObject.setDescription(input);
-            sendMessageService.send(chatId, "Вы добавили описание " + newObject.getName());
+            List<String> button = new ArrayList<>();
+            button.add("Сохранить без изображения");
+            sendMessageService.sendWithKeyboard(chatId, "Загрузите изображение", button);
             controller.getBookingObject().save(newObject);
-
+            statusMap.put(chatId, "загрузка изображения");
+        } else if (status.equals("Пропустить")) {
+            sendMessageService.send(chatId, "Готово\n" + newObject.getName() + "\n" + newObject.getDescription());
+            controller.getBookingObject().save(newObject);
             statusMap.put(chatId, "begin");
             isFinished = true;
+        } else if (status.equals("загрузка изображения")) {
+
+            String path = "src/main/resources/images" + "image2";
+
+            Message message = update.getMessage();
+            if (message.hasPhoto()) {
+                System.out.println("HAS PHOTO");
+
+                String getFileId = message.getPhoto().get(2).getFileId();
+                String filePath = "src/main/resources/images/" + getFileId + ".jpeg";
+                java.io.File file = new java.io.File(filePath);
+
+
+                GetFile getFile = new GetFile(message.getPhoto().get(2).getFileId());
+                try {
+                    File f = bot.downloadFile(bot.execute(getFile), file);
+                    newObject.setImage(filePath);
+
+                    controller.getBookingObject().save(newObject);
+                    sendMessageService.send(chatId, "Готово\n" + newObject.getName() + "\n" + newObject.getDescription());
+
+                    statusMap.put(chatId, "begin");
+                    isFinished = true;
+                } catch (TelegramApiException e) {
+                    sendMessageService.send(chatId, "Не получилось сохранить изображение, попробуйте другое");
+
+                    e.printStackTrace();
+                }
+
+            } else {
+                List<String> button = new ArrayList<>();
+                button.add("Сохранить без изображения");
+                sendMessageService.sendWithKeyboard(chatId, "Не получилось сохранить изображение, попробуйте еще раз", button);
+                statusMap.put(chatId, "загрузка изображения");
+            }
+
+//            File file = new File(path);
+//            GetFile getFile = new GetFile(update.getMessage().getPhoto().get(3).getFileId());
+//            System.out.println("GET FILE " + getFile.toString());
+
         }
 
         return isFinished;

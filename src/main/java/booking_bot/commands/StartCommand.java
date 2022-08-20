@@ -115,7 +115,7 @@ public class StartCommand extends CommandParent {
     private ReplyKeyboardMarkup adminKeyboard() {
         KeyboardRow keyboardRow1 = new KeyboardRow();
         keyboardRow1.add("Забронировать");
-        keyboardRow1.add("Отмена бронирования");
+        keyboardRow1.add("Мои бронирования");
 
         KeyboardRow keyboardRow2 = new KeyboardRow();
         keyboardRow2.add("Добавить объект");
@@ -137,7 +137,7 @@ public class StartCommand extends CommandParent {
     private ReplyKeyboardMarkup studentKeyboard() {
         KeyboardRow keyboardRow1 = new KeyboardRow();
         keyboardRow1.add("Забронировать");
-        keyboardRow1.add("Отмена бронирования");
+        keyboardRow1.add("Мои бронирования");
 
         ArrayList<KeyboardRow> keyBoardRows = new ArrayList<>();
         keyBoardRows.add(keyboardRow1);
