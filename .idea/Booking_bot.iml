@@ -16,6 +16,7 @@
         <fileset id="fileset" name="BotConfig" removed="false">
           <file>file://$MODULE_DIR$/src/main/java/booking_bot/Configs/BotConfig.java</file>
           <file>file://$MODULE_DIR$/src/main/java/booking_bot/Configs/DataBaseConfig.java</file>
+          <file>file://$MODULE_DIR$/src/main/java/booking_bot/configs/BotConfig.java</file>
         </fileset>
       </configuration>
     </facet>

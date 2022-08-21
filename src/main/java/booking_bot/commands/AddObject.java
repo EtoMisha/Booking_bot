@@ -58,13 +58,13 @@ public class AddObject extends CommandParent {
         if (status.equals("begin")) {
 
             isFinished = false;
-            List<String> campuses = getNames(controller.getCampus().findAll());
-            sendMessageService.sendWithKeyboard(chatId, "Выберите кампус", campuses);
+//            List<String> campuses = getNames(controller.getCampus().findAll());
+//            sendMessageService.sendWithKeyboard(chatId, "Выберите кампус", campuses);
 
-            statusMap.put(chatId, "Выбор кампуса");
-        } else if (status.equals("Выбор кампуса")) {
-            newObject.setCampus(controller.getCampus().findByName(input));
-
+//            statusMap.put(chatId, "Выбор категории");
+//        } else if (status.equals("Выбор кампуса")) {
+//            newObject.setCampus(controller.getCampus().findByName(input));
+            newObject.setCampus(controller.getUser().findByTelegram(chatId).getCampus());
             List<String> buttons = getNames(controller.getType().findAll());
             sendMessageService.sendWithKeyboard(chatId, "Выберите категорию", buttons);
 
@@ -100,16 +100,21 @@ public class AddObject extends CommandParent {
             List<String> button = new ArrayList<>();
             button.add("Сохранить без изображения");
             sendMessageService.sendWithKeyboard(chatId, "Загрузите изображение", button);
-            controller.getBookingObject().save(newObject);
             statusMap.put(chatId, "загрузка изображения");
         } else if (status.equals("Пропустить")) {
             sendMessageService.send(chatId, "Готово\n" + newObject.getName() + "\n" + newObject.getDescription());
             controller.getBookingObject().save(newObject);
             statusMap.put(chatId, "begin");
             isFinished = true;
-        } else if (status.equals("загрузка изображения")) {
 
-            String path = "src/main/resources/images" + "image2";
+        } else if (status.equals("Сохранить без изображения")) {
+
+            sendMessageService.send(chatId, "Готово\n" + newObject.getName() + "\n" + newObject.getDescription());
+            controller.getBookingObject().save(newObject);
+            statusMap.put(chatId, "begin");
+            isFinished = true;
+
+        } else if (status.equals("загрузка изображения")) {
 
             Message message = update.getMessage();
             if (message.hasPhoto()) {
@@ -118,7 +123,6 @@ public class AddObject extends CommandParent {
                 String getFileId = message.getPhoto().get(2).getFileId();
                 String filePath = "src/main/resources/images/" + getFileId + ".jpeg";
                 java.io.File file = new java.io.File(filePath);
-
 
                 GetFile getFile = new GetFile(message.getPhoto().get(2).getFileId());
                 try {

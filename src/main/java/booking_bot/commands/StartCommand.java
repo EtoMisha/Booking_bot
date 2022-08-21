@@ -47,7 +47,7 @@ public class StartCommand extends CommandParent {
 
             try {
                 userTmp = controller.getUser().findByTelegram(chatId);
-                SendMessage send = new SendMessage(chatId.toString(), "Привет, "+ userTmp.getName() + ". Что будем бронировать?");
+                SendMessage send = new SendMessage(chatId.toString(), "Привет, "+ userTmp.getName());// + ". Что будем бронировать?");
 
                 if (userTmp.getRole().getName().equals("Студент")) {
                     send.setReplyMarkup(studentKeyboard());
@@ -121,11 +121,14 @@ public class StartCommand extends CommandParent {
         keyboardRow2.add("Добавить объект");
 //        keyboardRow2.add("Редактировать каталог");
         keyboardRow2.add("Редактировать объект");
-        keyboardRow2.add("Управление пользователем");
+
+        KeyboardRow keyboardRow3 = new KeyboardRow();
+        keyboardRow3.add("Управление пользователями");
 
         ArrayList<KeyboardRow> keyBoardRows = new ArrayList<>();
         keyBoardRows.add(keyboardRow1);
         keyBoardRows.add(keyboardRow2);
+        keyBoardRows.add(keyboardRow3);
 
         ReplyKeyboardMarkup replyKeyboard = new ReplyKeyboardMarkup();
         replyKeyboard.setKeyboard(keyBoardRows);
