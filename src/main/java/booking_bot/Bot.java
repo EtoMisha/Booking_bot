@@ -67,6 +67,7 @@ public class Bot extends TelegramLongPollingBot {
             commandMap.remove(chatId);
         }
 
+
     }
 
     public void setCommandContainer(CommandContainer commandContainer) {

@@ -51,7 +51,7 @@ public class NewBooking extends CommandParent {
 
         if (status.equals("begin")) {
             isFinished = false;
-            //TODO показывать только категории внутри кампуса, придутся в таблицу types добавить ссылку
+            //TODO показывать только категории внутри кампуса
             buttons = getNames(controller.getType().findAll());
             sendMessageService.sendWithKeyboard(chatId, "Выберите категорию", buttons);
             statusMap.put(chatId, "Выбор объекта");
@@ -67,7 +67,8 @@ public class NewBooking extends CommandParent {
             } else {
                 sendMessageService.send(chatId, "Выберите что забронировать:");
                 for (BookObject object : bookObjectList) {
-                    if (object.getImage().equals("null")) {
+                    System.out.println("GET IMAGE" + object.getImage());
+                    if (object.getImage() == null || object.getImage().equals("null") || object.getImage().equals("")) {
                         SendMessage sendMessage = new SendMessage();
                         sendMessage.setChatId(chatId.toString());
                         sendMessage.setParseMode("markdown");
@@ -187,7 +188,7 @@ public class NewBooking extends CommandParent {
         List<List<InlineKeyboardButton>> totalList = new ArrayList<>();
 
         LocalDate today = LocalDate.now();
-        LocalDate counter = today.minusDays(today.getDayOfWeek().getValue());
+        LocalDate counter = today.minusDays(today.getDayOfWeek().getValue() - 1);
 
         for(int i = 0; i < 4; ++i) {
             List<InlineKeyboardButton> keyboardButtonRow = new ArrayList<>();
@@ -228,7 +229,8 @@ public class NewBooking extends CommandParent {
             e.printStackTrace();
         }
 
-        if (bookingList == null) {
+        System.out.println("GET BOOK SLOTS" + bookingList);
+        if (bookingList == null || bookingList.isEmpty()) {
             return null;
         } else {
             return stringBuilder.toString();

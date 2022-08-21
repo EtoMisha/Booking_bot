@@ -20,7 +20,7 @@ public class UserRedact extends CommandParent {
 
     public UserRedact(SendMessageService sendMessageService, Controller controller, CommandContainer commandContainer) {
         super(sendMessageService, controller, commandContainer);
-        this.commandName = "Управление пользователем";
+        this.commandName = "Управление пользователями";
         commandContainer.add(commandName, this);
         userTmp = new User(); // ID ???
         flagRedact = false;
