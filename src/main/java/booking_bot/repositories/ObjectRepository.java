@@ -44,10 +44,11 @@ public class ObjectRepository {
     }
 
     public void update(BookObject entity) throws DataAccessException {
-        String query = String.format("UPDATE booking_objects SET type_id = %d, name = '%s', description = '%s, " +
+        String query = String.format("UPDATE booking_objects SET type_id = %d, name = '%s', description = '%s', " +
                         "image = '%s', campus_id = %d, floor = %d, room_number = %d WHERE id = %d;",
                 entity.getType().getId(), entity.getName(), entity.getDescription(), entity.getImage(),
                 entity.getCampus().getId(), entity.getFloor(), entity.getRoom_number(), entity.getId());
+        System.out.println("OBJ REPO: \n" + query);
         jdbcTemplate.update(query);
     }
 
