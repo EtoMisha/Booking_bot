@@ -3,3 +3,4 @@
 *.class
 /target
 /.idea/
+src/main/resources/*
