@@ -86,7 +86,7 @@ public class AddObject extends CommandParent {
                 }
             }
             if (isObject) {
-                sendMessageService.send(chatId, "Объект " + newObject.getName() + " уже существует. Вы можете удалить или отредактировать его.");
+                sendMessageService.send(chatId, "Объект " + newObject.getName() + " уже существует. Вы можете удалить или отредактировать его по кнопке \"Редактировать объект\".");
                 statusMap.put(chatId, "begin");
                 isFinished = true;
             }
