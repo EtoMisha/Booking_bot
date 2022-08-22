@@ -57,4 +57,6 @@ public class UserRepository {
     public User findByTelegram(Long id) throws DataAccessException {
         return jdbcTemplate.queryForObject("SELECT * FROM users, roles, campuses WHERE role_id = roles.id AND campus_id = campuses.id AND telegram_id = " + id + ";", ROW_MAPPER);
     }
+
+
 }

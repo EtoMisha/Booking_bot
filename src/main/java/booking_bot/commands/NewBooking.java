@@ -67,7 +67,6 @@ public class NewBooking extends CommandParent {
             } else {
                 sendMessageService.send(chatId, "Выберите что забронировать:");
                 for (BookObject object : bookObjectList) {
-                    System.out.println("GET IMAGE" + object.getImage());
                     if (object.getImage() == null || object.getImage().equals("null") || object.getImage().equals("")) {
                         SendMessage sendMessage = new SendMessage();
                         sendMessage.setChatId(chatId.toString());
@@ -78,7 +77,6 @@ public class NewBooking extends CommandParent {
                             sendMessage.setText("*" + object.getName() + "*\n" + object.getDescription());
                         }
                         sendMessage.setReplyMarkup(makeBookButton(object.getName()));
-                        System.out.println("NAME " + object.getName());
                         sendMessageService.sendCustom(sendMessage);
                     } else {
                         SendPhoto sendPhoto = makeObjectMessage(object);
@@ -93,7 +91,6 @@ public class NewBooking extends CommandParent {
         } else if (this.status.equals("Запрос даты")) {
 
             bookObject = controller.getBookingObject().findByName(input);
-            System.out.println("new booking " + bookObject);
             SendMessage send = new SendMessage();
 
             send.setChatId(chatId.toString());
@@ -229,7 +226,6 @@ public class NewBooking extends CommandParent {
             e.printStackTrace();
         }
 
-        System.out.println("GET BOOK SLOTS" + bookingList);
         if (bookingList == null || bookingList.isEmpty()) {
             return null;
         } else {
