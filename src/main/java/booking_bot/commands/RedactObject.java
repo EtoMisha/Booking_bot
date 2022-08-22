@@ -79,6 +79,7 @@ public class RedactObject extends CommandParent {
             }
             else if (input.equals("Удалить")) {
                 sendMessageService.send(chatId, "Вы удалили объект " + tmpObject.getName());
+                controller.getBookingObject().delete(tmpObject);
                 statusMap.put(chatId, "Удаление объекта");
             }
         } else if (status.equals("Изменение наименование объекта")) {
@@ -105,7 +106,7 @@ public class RedactObject extends CommandParent {
 //            sendMessageService.send(chatId, "Вы удалили объект " + tmpObject.getName());
 
             statusMap.put(chatId, "begin");
-            isFinished = true;
+//            isFinished = true;
         }
         return isFinished;
     }

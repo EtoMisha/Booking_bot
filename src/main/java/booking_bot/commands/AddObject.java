@@ -108,8 +108,7 @@ public class AddObject extends CommandParent {
             isFinished = true;
 
         } else if (status.equals("загрузка изображения")) {
-            System.out.println("image upload - start");
-            if (input != null && input.equals("Сохранить без изображения")) {
+            if (input.equals("Сохранить без изображения")) {
                 sendMessageService.send(chatId, "Готово\n" + newObject.getName() + "\n" + newObject.getDescription());
                 controller.getBookingObject().save(newObject);
                 statusMap.put(chatId, "begin");
@@ -120,7 +119,7 @@ public class AddObject extends CommandParent {
                     System.out.println("HAS PHOTO");
 
                     String getFileId = message.getPhoto().get(2).getFileId();
-                    String filePath = "src/main/resources/images/" + getFileId + ".jpeg";
+                    String filePath = "/var/www/21sch/image/" + getFileId + ".jpeg";
                     java.io.File file = new java.io.File(filePath);
 
                     GetFile getFile = new GetFile(message.getPhoto().get(2).getFileId());
@@ -130,7 +129,7 @@ public class AddObject extends CommandParent {
 
                         controller.getBookingObject().save(newObject);
                         sendMessageService.send(chatId, "Готово\n" + newObject.getName() + "\n" + newObject.getDescription());
-                        System.out.println(newObject);
+
                         statusMap.put(chatId, "begin");
                         isFinished = true;
                     } catch (TelegramApiException e) {

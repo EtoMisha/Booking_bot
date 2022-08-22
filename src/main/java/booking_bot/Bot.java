@@ -47,7 +47,7 @@ public class Bot extends TelegramLongPollingBot {
             input = update.getMessage().getText();
         }
 
-        System.out.println("----\nbot: text: " + input + " id " + chatId + " callback " + update.hasCallbackQuery());
+        System.out.println("----\nbot: text: " + input + ", id " + chatId + ", callback " + update.hasCallbackQuery());
 
         Command command;
         boolean isFinished;

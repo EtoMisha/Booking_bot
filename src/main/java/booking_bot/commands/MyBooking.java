@@ -45,6 +45,7 @@ public class MyBooking extends CommandParent {
         }
 
         user = controller.getUser().findByTelegram(chatId);
+        System.out.println("-- my bookings: begin, status " + status);
 
         if (status.equals("begin")) {
 
@@ -54,7 +55,6 @@ public class MyBooking extends CommandParent {
             if (bookingList.isEmpty()) {
                 sendMessageService.send(chatId, "У вас пока нет бронирований");
                 statusMap.put(chatId, "begin");
-                isFinished = true;
             } else {
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yy");
                 for (Booking booking : bookingList) {
@@ -88,7 +88,7 @@ public class MyBooking extends CommandParent {
 
 
             statusMap.put(chatId, "begin");
-            isFinished = true;
+//            isFinished = true;
         }
 
         return isFinished;
