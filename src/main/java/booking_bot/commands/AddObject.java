@@ -108,11 +108,11 @@ public class AddObject extends CommandParent {
             isFinished = true;
 
         } else if (status.equals("загрузка изображения")) {
-            if (input.equals("Сохранить без изображения")) {
+            if (input != null && input.equals("Сохранить без изображения")) {
                 sendMessageService.send(chatId, "Готово\n" + newObject.getName() + "\n" + newObject.getDescription());
                 controller.getBookingObject().save(newObject);
                 statusMap.put(chatId, "begin");
-                isFinished = true;
+
             } else {
                 Message message = update.getMessage();
                 if (message.hasPhoto()) {
@@ -120,6 +120,7 @@ public class AddObject extends CommandParent {
 
                     String getFileId = message.getPhoto().get(2).getFileId();
                     String filePath = "/var/www/21sch/image/" + getFileId + ".jpeg";
+//                    String filePath = "src/main/resources/images/" + getFileId + ".jpeg";
                     java.io.File file = new java.io.File(filePath);
 
                     GetFile getFile = new GetFile(message.getPhoto().get(2).getFileId());
