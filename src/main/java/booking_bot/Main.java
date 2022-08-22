@@ -17,6 +17,7 @@ public class Main {
 
         Bot bot = context.getBean("bot", Bot.class);
 
+
         try {
             TelegramBotsApi botsApi = new TelegramBotsApi(DefaultBotSession.class);
             botsApi.registerBot(bot);

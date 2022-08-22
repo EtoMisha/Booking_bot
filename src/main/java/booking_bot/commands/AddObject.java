@@ -86,7 +86,7 @@ public class AddObject extends CommandParent {
                 }
             }
             if (isObject) {
-                sendMessageService.send(chatId, "Объект " + newObject.getName() + " уже существует. Вы можете удалить или отредактировать его.");
+                sendMessageService.send(chatId, "Объект " + newObject.getName() + " уже существует. Вы можете удалить или отредактировать его по кнопке \"Редактировать объект\".");
                 statusMap.put(chatId, "begin");
                 isFinished = true;
             }
@@ -107,50 +107,45 @@ public class AddObject extends CommandParent {
             statusMap.put(chatId, "begin");
             isFinished = true;
 
-        } else if (status.equals("Сохранить без изображения")) {
-
-            sendMessageService.send(chatId, "Готово\n" + newObject.getName() + "\n" + newObject.getDescription());
-            controller.getBookingObject().save(newObject);
-            statusMap.put(chatId, "begin");
-            isFinished = true;
-
         } else if (status.equals("загрузка изображения")) {
-
-            Message message = update.getMessage();
-            if (message.hasPhoto()) {
-                System.out.println("HAS PHOTO");
-
-                String getFileId = message.getPhoto().get(2).getFileId();
-                String filePath = "src/main/resources/images/" + getFileId + ".jpeg";
-                java.io.File file = new java.io.File(filePath);
-
-                GetFile getFile = new GetFile(message.getPhoto().get(2).getFileId());
-                try {
-                    File f = bot.downloadFile(bot.execute(getFile), file);
-                    newObject.setImage(filePath);
-
-                    controller.getBookingObject().save(newObject);
-                    sendMessageService.send(chatId, "Готово\n" + newObject.getName() + "\n" + newObject.getDescription());
-
-                    statusMap.put(chatId, "begin");
-                    isFinished = true;
-                } catch (TelegramApiException e) {
-                    sendMessageService.send(chatId, "Не получилось сохранить изображение, попробуйте другое");
-
-                    e.printStackTrace();
-                }
-
+            System.out.println("image upload - start");
+            if (input != null && input.equals("Сохранить без изображения")) {
+                sendMessageService.send(chatId, "Готово\n" + newObject.getName() + "\n" + newObject.getDescription());
+                controller.getBookingObject().save(newObject);
+                statusMap.put(chatId, "begin");
+                isFinished = true;
             } else {
-                List<String> button = new ArrayList<>();
-                button.add("Сохранить без изображения");
-                sendMessageService.sendWithKeyboard(chatId, "Не получилось сохранить изображение, попробуйте еще раз", button);
-                statusMap.put(chatId, "загрузка изображения");
+                Message message = update.getMessage();
+                if (message.hasPhoto()) {
+                    System.out.println("HAS PHOTO");
+
+                    String getFileId = message.getPhoto().get(2).getFileId();
+                    String filePath = "src/main/resources/images/" + getFileId + ".jpeg";
+                    java.io.File file = new java.io.File(filePath);
+
+                    GetFile getFile = new GetFile(message.getPhoto().get(2).getFileId());
+                    try {
+                        File f = bot.downloadFile(bot.execute(getFile), file);
+                        newObject.setImage(filePath);
+
+                        controller.getBookingObject().save(newObject);
+                        sendMessageService.send(chatId, "Готово\n" + newObject.getName() + "\n" + newObject.getDescription());
+                        System.out.println(newObject);
+                        statusMap.put(chatId, "begin");
+                        isFinished = true;
+                    } catch (TelegramApiException e) {
+                        sendMessageService.send(chatId, "Не получилось сохранить изображение, попробуйте другое");
+
+                        e.printStackTrace();
+                    }
+
+                } else {
+                    List<String> button = new ArrayList<>();
+                    button.add("Сохранить без изображения");
+                    sendMessageService.sendWithKeyboard(chatId, "Не получилось сохранить изображение, попробуйте еще раз", button);
+                    statusMap.put(chatId, "загрузка изображения");
+                }
             }
-
-//            File file = new File(path);
-//            GetFile getFile = new GetFile(update.getMessage().getPhoto().get(3).getFileId());
-//            System.out.println("GET FILE " + getFile.toString());
-
         }
 
         return isFinished;

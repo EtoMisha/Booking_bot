@@ -122,13 +122,13 @@ public class AdminStartCommand extends CommandParent {
     private ReplyKeyboardMarkup adminKeyboard() {
         KeyboardRow keyboardRow1 = new KeyboardRow();
         keyboardRow1.add("Забронировать");
-        keyboardRow1.add("Отмена бронирования");
+        keyboardRow1.add("Мои бронирования");
 
         KeyboardRow keyboardRow2 = new KeyboardRow();
         keyboardRow2.add("Добавить объект");
 //        keyboardRow2.add("Редактировать каталог");
         keyboardRow2.add("Редактировать объект");
-        keyboardRow2.add("Управление пользователем");
+        keyboardRow2.add("Управление пользователями");
 
         ArrayList<KeyboardRow> keyBoardRows = new ArrayList<>();
         keyBoardRows.add(keyboardRow1);

@@ -49,6 +49,8 @@ public class MyBooking extends CommandParent {
         if (status.equals("begin")) {
 
             List<Booking> bookingList = controller.getBooking().findByUser(user);
+            System.out.println("BEGIN ");
+            System.out.println("BEGIN LIST " + bookingList);
             if (bookingList.isEmpty()) {
                 sendMessageService.send(chatId, "У вас пока нет бронирований");
                 statusMap.put(chatId, "begin");
@@ -72,11 +74,15 @@ public class MyBooking extends CommandParent {
                 }
             }
 
+            System.out.println("BEGIN END");
+
             statusMap.put(chatId, "Удалить бронь");
         } else if (status.equals("Удалить бронь")) {
+            System.out.println("DELETE ");
             Booking bookingToDelete = new Booking();
             bookingToDelete.setId(Integer.parseInt(input));
 
+            System.out.println("BOOKING TO DELETE " + bookingToDelete);
             controller.getBooking().delete(bookingToDelete);
             sendMessageService.send(chatId, "Готово");
 
