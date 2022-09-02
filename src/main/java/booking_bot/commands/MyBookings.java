@@ -4,37 +4,28 @@ import booking_bot.models.BookObject;
 import booking_bot.models.Booking;
 import booking_bot.models.User;
 import booking_bot.repositories.Controller;
-import booking_bot.services.SendMessageService;
-import org.springframework.dao.DataAccessException;
+import booking_bot.services.BotService;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
-import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
-import java.io.File;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MyBooking extends CommandParent {
+public class MyBookings extends CommandParent {
     private String commandName = "Мои бронирования";
 
     private BookObject bookObject;
     private Booking booking;
     private User user;
 
-    public MyBooking(SendMessageService sendMessageService, Controller controller, CommandContainer commandContainer) {
-        super(sendMessageService, controller, commandContainer);
+    public MyBookings(BotService botService, Controller controller, CommandContainer commandContainer) {
+        super(botService, controller, commandContainer);
         commandContainer.add(commandName, this);
         bookObject = new BookObject();
         booking = new Booking();
-
     }
 
     public boolean execute(Update update, boolean begin) {
@@ -53,7 +44,7 @@ public class MyBooking extends CommandParent {
             System.out.println("BEGIN ");
             System.out.println("BEGIN LIST " + bookingList);
             if (bookingList.isEmpty()) {
-                sendMessageService.send(chatId, "У вас пока нет бронирований");
+                botService.sendMessage(chatId, "У вас пока нет бронирований", null);
                 statusMap.put(chatId, "begin");
             } else {
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yy");
@@ -70,7 +61,7 @@ public class MyBooking extends CommandParent {
                     sendMessage.setChatId(chatId.toString());
                     sendMessage.setReplyMarkup(makeCancelButton(String.valueOf(booking.getId())));
 
-                    sendMessageService.sendCustom(sendMessage);
+                    botService.sendCustom(sendMessage);
                 }
             }
 
@@ -84,7 +75,7 @@ public class MyBooking extends CommandParent {
 
             System.out.println("BOOKING TO DELETE " + bookingToDelete);
             controller.getBooking().delete(bookingToDelete);
-            sendMessageService.send(chatId, "Готово");
+            botService.sendMessage(chatId, "Готово", null);
 
 
             statusMap.put(chatId, "begin");

@@ -1,10 +1,8 @@
 package booking_bot.commands;
 
-import booking_bot.models.BookObject;
 import booking_bot.models.HasName;
-import booking_bot.models.Type;
 import booking_bot.repositories.Controller;
-import booking_bot.services.SendMessageService;
+import booking_bot.services.BotService;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 import java.util.ArrayList;
@@ -14,22 +12,22 @@ import java.util.Map;
 
 public abstract class
 CommandParent implements Command {
-    protected final SendMessageService sendMessageService;
+    protected final BotService botService;
     protected final Controller controller;
     protected final CommandContainer commandContainer;
-    protected Map<Long, String> statusMap;
+//    protected Map<Long, String> statusMap;
 
     protected boolean isFinished;
     protected Long chatId;
     protected String input;
-    protected String status;
+//    protected String status;
 
-    public CommandParent(SendMessageService sendMessageService, Controller controller, CommandContainer commandContainer) {
-        this.sendMessageService = sendMessageService;
+    public CommandParent(BotService botService, Controller controller, CommandContainer commandContainer) {
+        this.botService = botService;
         this.controller = controller;
         this.commandContainer = commandContainer;
         this.isFinished = false;
-        this.statusMap = new HashMap<>();
+//        this.statusMap = new HashMap<>();
     }
 
     protected void prepare(Update update) {
@@ -41,11 +39,11 @@ CommandParent implements Command {
             input = update.getMessage().getText();
         }
 
-        if (!statusMap.containsKey(chatId)) {
-            statusMap.put(chatId, "begin");
-        }
+//        if (!statusMap.containsKey(chatId)) {
+//            statusMap.put(chatId, "begin");
+//        }
 
-        status = statusMap.get(chatId);
+//        status = statusMap.get(chatId);
     }
 
     protected <T> List<String> getNames(List<T> entityList) {
@@ -59,20 +57,4 @@ CommandParent implements Command {
         return names;
     }
 
-//
-//    protected List<Object> objectsByType(Type type) {
-//
-//        List<BookObject> bookObjects = controller.findAll(BookObject.class);
-//        List<Object> objectsOfType = new ArrayList<>();
-//        for (BookObject obj : bookObjects) {
-//            if (obj.getType().equals(type)) {
-//                objectsOfType.add(obj);
-//            }
-//        }
-//        return objectsOfType;
-//    }
-
-//    public String getCommandName() {
-//        return commandName;
-//    }
 }

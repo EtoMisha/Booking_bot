@@ -3,8 +3,8 @@ package booking_bot.configs;
 import booking_bot.Bot;
 import booking_bot.commands.*;
 import booking_bot.repositories.Controller;
-import booking_bot.services.SendMessageService;
-import booking_bot.services.SendMessageServiceImpl;
+import booking_bot.services.BotService;
+import booking_bot.services.BotServiceImpl;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,8 +13,6 @@ import org.springframework.context.annotation.PropertySource;
 @Configuration
 @PropertySource("classpath:bot.properties")
 public class BotConfig {
-//    @Autowired
-//    CommandContainer commandContainer;
 
     @Value("${bot.username}")
     private String username;
@@ -22,8 +20,8 @@ public class BotConfig {
     private String token;
 
     @Bean
-    public SendMessageService sendMessageService (Bot bot) {
-        return new SendMessageServiceImpl(bot);
+    public BotService sendMessageService (Bot bot) {
+        return new BotServiceImpl(bot);
     }
 
     @Bean
@@ -39,45 +37,38 @@ public class BotConfig {
     }
 
     @Bean
-    public Command testCommand(SendMessageService sendMessageService, Controller controller, CommandContainer commandContainer) {
-        return new TestCommand(sendMessageService, controller, commandContainer);
+    public Command editUser(BotService botService, Controller controller, CommandContainer commandContainer) {
+        return new EditUser(botService, controller, commandContainer);
     }
 
     @Bean
-    public Command userRedact(SendMessageService sendMessageService, Controller controller, CommandContainer commandContainer) {
-        return new UserRedact(sendMessageService, controller, commandContainer);
+    public Command start(BotService botService, Controller controller, CommandContainer commandContainer) {
+        return new Start(botService, controller, commandContainer);
     }
 
     @Bean
-    public Command startCommand(SendMessageService sendMessageService, Controller controller, CommandContainer commandContainer) {
-        return new StartCommand(sendMessageService, controller, commandContainer);
+    public Command admin(BotService botService, Controller controller, CommandContainer commandContainer) {
+        return new Admin(botService, controller, commandContainer);
     }
 
     @Bean
-    public Command addObject(SendMessageService sendMessageService, Controller controller, CommandContainer commandContainer, Bot bot) {
-        AddObject addObject = new AddObject(sendMessageService, controller, commandContainer);
-        addObject.setBot(bot);
-        return addObject;
+    public Command addObject(BotService botService, Controller controller, CommandContainer commandContainer) {
+        return new AddObject(botService, controller, commandContainer);
     }
 
     @Bean
-    public Command adminStartCommand(SendMessageService sendMessageService, Controller controller, CommandContainer commandContainer) {
-        return new AdminStartCommand(sendMessageService, controller, commandContainer);
+    public Command editObject(BotService botService, Controller controller, CommandContainer commandContainer) {
+        return new EditObject(botService, controller, commandContainer);
     }
 
     @Bean
-    public Command redactObject(SendMessageService sendMessageService, Controller controller, CommandContainer commandContainer) {
-        return new RedactObject(sendMessageService, controller, commandContainer);
+    public Command newBooking(BotService botService, Controller controller, CommandContainer commandContainer) {
+        return new NewBooking(botService, controller, commandContainer);
     }
 
     @Bean
-    public Command newBooking(SendMessageService sendMessageService, Controller controller, CommandContainer commandContainer) {
-        return new NewBooking(sendMessageService, controller, commandContainer);
-    }
-
-    @Bean
-    public Command MyBooking(SendMessageService sendMessageService, Controller controller, CommandContainer commandContainer) {
-        return new MyBooking(sendMessageService, controller, commandContainer);
+    public Command MyBookings(BotService botService, Controller controller, CommandContainer commandContainer) {
+        return new MyBookings(botService, controller, commandContainer);
     }
 
 }

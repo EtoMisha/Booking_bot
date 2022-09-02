@@ -47,18 +47,13 @@ public class Bot extends TelegramLongPollingBot {
             input = update.getMessage().getText();
         }
 
-        System.out.println("----\nbot: text: " + input + ", id " + chatId + ", callback " + update.hasCallbackQuery());
-
         Command command;
         boolean isFinished;
         if (commandContainer.hasCommand(input)) {
-
             command = commandContainer.getCommand(input);
             commandMap.put(chatId, command.getCommandName());
-
             isFinished = command.execute(update, true);
         } else {
-            System.out.println("bot: command from map");
             command = commandContainer.getCommand(commandMap.get(chatId));
             isFinished = command.execute(update, false);
         }

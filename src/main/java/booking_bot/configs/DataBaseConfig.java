@@ -1,6 +1,5 @@
 package booking_bot.configs;
 
-import booking_bot.models.*;
 import booking_bot.repositories.*;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;

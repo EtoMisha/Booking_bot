@@ -2,7 +2,7 @@ package booking_bot.commands;
 
 import booking_bot.models.*;
 import booking_bot.repositories.Controller;
-import booking_bot.services.SendMessageService;
+import booking_bot.services.BotService;
 import org.springframework.dao.DataAccessException;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
@@ -11,7 +11,6 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
-import java.awt.*;
 import java.io.File;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
@@ -29,8 +28,8 @@ public class NewBooking extends CommandParent {
     private Booking booking;
     private User user;
 
-    public NewBooking(SendMessageService sendMessageService, Controller controller, CommandContainer commandContainer) {
-        super(sendMessageService, controller, commandContainer);
+    public NewBooking(BotService botService, Controller controller, CommandContainer commandContainer) {
+        super(botService, controller, commandContainer);
         commandContainer.add(commandName, this);
         bookObject = new BookObject();
         booking = new Booking();
@@ -53,7 +52,7 @@ public class NewBooking extends CommandParent {
             isFinished = false;
             //TODO показывать только категории внутри кампуса
             buttons = getNames(controller.getType().findAll());
-            sendMessageService.sendWithKeyboard(chatId, "Выберите категорию", buttons);
+            botService.sendMessage(chatId, "Выберите категорию", buttons);
             statusMap.put(chatId, "Выбор объекта");
 
         } else if (status.equals("Выбор объекта")) {
@@ -61,11 +60,11 @@ public class NewBooking extends CommandParent {
             List<BookObject> bookObjectList = controller.getBookingObject().findByType(input);
 
             if (bookObjectList.isEmpty()) {
-                sendMessageService.send(chatId, "Ничего не нашлось");
+                botService.sendMessage(chatId, "Ничего не нашлось", null);
                 statusMap.put(chatId, "begin");
 
             } else {
-                sendMessageService.send(chatId, "Выберите что забронировать:");
+                botService.sendMessage(chatId, "Выберите что забронировать:", null);
                 for (BookObject object : bookObjectList) {
                     if (object.getImage() == null || object.getImage().equals("null") || object.getImage().equals("")) {
                         SendMessage sendMessage = new SendMessage();
@@ -77,10 +76,10 @@ public class NewBooking extends CommandParent {
                             sendMessage.setText("*" + object.getName() + "*\n" + object.getDescription());
                         }
                         sendMessage.setReplyMarkup(makeBookButton(object.getName()));
-                        sendMessageService.sendCustom(sendMessage);
+                        botService.sendCustom(sendMessage);
                     } else {
                         SendPhoto sendPhoto = makeObjectMessage(object);
-                        sendMessageService.sendPhoto(sendPhoto);
+                        botService.sendPhoto(sendPhoto);
                     }
                 }
 
@@ -96,24 +95,24 @@ public class NewBooking extends CommandParent {
             send.setChatId(chatId.toString());
             send.setText("Выберите дату бронирования:");
             send.setReplyMarkup(makeCalendar());
-            sendMessageService.sendCustom(send);
+            botService.sendCustom(send);
             statusMap.put(chatId, "Запрос времени");
 
         } else if (status.equals("Запрос времени")) {
 
             if (input.equals("x")) {
-                sendMessageService.send(chatId, "На этот день не получится, выберите другой");
+                botService.sendMessage(chatId, "На этот день не получится, выберите другой", null);
             } else {
                 selectedDate = LocalDate.of(LocalDate.now().getYear(), LocalDate.now().getMonth(), Integer.parseInt(input));
                 String bookedSlots = getBookedSlots(selectedDate);
 
                 if (bookedSlots == null) {
-                    sendMessageService.send(chatId, "На эту дату всё свободно");
+                    botService.sendMessage(chatId, "На эту дату всё свободно", null);
                 } else {
-                    sendMessageService.send(chatId, "На эту дату уже есть такие бронирования:\n" + bookedSlots);
+                    botService.sendMessage(chatId, "На эту дату уже есть такие бронирования:\n" + bookedSlots, null);
                 }
 
-                sendMessageService.send(chatId, "Введите время начала в формате ЧЧ.ММ\nНапример 12.30");
+                botService.sendMessage(chatId, "Введите время начала в формате ЧЧ.ММ\nНапример 12.30", null);
                 statusMap.put(chatId, "Ввод времени начала");
             }
 
@@ -121,15 +120,15 @@ public class NewBooking extends CommandParent {
             try {
                 timeStart = LocalTime.parse(input, timeFormatter);
                 if (selectedDate.isEqual(LocalDate.now()) && timeStart.isBefore(LocalTime.now())) {
-                    sendMessageService.send(chatId, "Время должно быть не раньше текущего.\nВведите время начала снова");
+                    botService.sendMessage(chatId, "Время должно быть не раньше текущего.\nВведите время начала снова", null);
                     statusMap.put(chatId, "Ввод времени начала");
                 } else {
-                    sendMessageService.send(chatId, "Введите время окончания, тоже в формате ЧЧ.ММ");
+                    botService.sendMessage(chatId, "Введите время окончания, тоже в формате ЧЧ.ММ", null);
                     statusMap.put(chatId, "Ввод времени окончания");
                 }
             } catch (DateTimeParseException var8) {
                 System.err.println(var8.getMessage());
-                sendMessageService.send(chatId, "Не получилось, проверьте что формат времени правильный: ЧЧ.ММ\nНапример 12.30");
+                botService.sendMessage(chatId, "Не получилось, проверьте что формат времени правильный: ЧЧ.ММ\nНапример 12.30", null);
             }
 
         } else if (status.equals("Ввод времени окончания")) {
@@ -138,10 +137,10 @@ public class NewBooking extends CommandParent {
             try {
                 timeEnd = LocalTime.parse(input, timeFormatter);
                 if (timeEnd.isBefore(timeStart)) {
-                    sendMessageService.send(chatId, "Время окончания не должно быть раньше времени начала.\nВведите время окончания снова");
+                    botService.sendMessage(chatId, "Время окончания не должно быть раньше времени начала.\nВведите время окончания снова", null);
                     statusMap.put(chatId, "Ввод времени окончания");
                 } else if (!checkSlot(timeStart, timeEnd)) {
-                    sendMessageService.send(chatId, "Ваше время пересекается с уже имеющимся слотом.\nВведите время начала снова");
+                    botService.sendMessage(chatId, "Ваше время пересекается с уже имеющимся слотом.\nВведите время начала снова", null);
                     statusMap.put(chatId, "Ввод времени начала");
                 } else {
 
@@ -154,12 +153,12 @@ public class NewBooking extends CommandParent {
 
                         try {
                             controller.getBooking().save(booking);
-                            sendMessageService.send(chatId, "Готово \uD83D\uDC4D \nЗабронировали на "
+                            botService.sendMessage(chatId, "Готово \uD83D\uDC4D \nЗабронировали на "
                                     + selectedDate.format(dateFormatter) + " с " + timeStart + " до " + timeEnd
-                                    + ":\n" + bookObject.getName());
+                                    + ":\n" + bookObject.getName(), null);
                         } catch (DataAccessException e) {
                             e.printStackTrace();
-                            sendMessageService.send(chatId, "Не получилось, ошибка в базе данных :(");
+                            botService.sendMessage(chatId, "Не получилось, ошибка в базе данных :(", null);
                         }
 
                         statusMap.put(chatId, "begin");
@@ -168,7 +167,7 @@ public class NewBooking extends CommandParent {
 
             } catch (DateTimeParseException var7) {
                 System.err.println(var7.getMessage());
-                sendMessageService.send(chatId, "Не получилось, проверьте что формат времени правильный: ЧЧ.ММ\nНапример 12.30");
+                botService.sendMessage(chatId, "Не получилось, проверьте что формат времени правильный: ЧЧ.ММ\nНапример 12.30", null);
             }
 
         }

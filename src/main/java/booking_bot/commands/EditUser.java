@@ -1,26 +1,23 @@
 package booking_bot.commands;
 
-import booking_bot.models.Campus;
-import booking_bot.models.Role;
 import booking_bot.models.User;
 import booking_bot.repositories.Controller;
-import booking_bot.services.SendMessageService;
+import booking_bot.services.BotService;
 import org.springframework.dao.DataAccessException;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
-public class UserRedact extends CommandParent {
+public class EditUser extends CommandParent {
 
     private String commandName;
     private User userTmp;
     private boolean flagRedact;
 
-    public UserRedact(SendMessageService sendMessageService, Controller controller, CommandContainer commandContainer) {
-        super(sendMessageService, controller, commandContainer);
-        this.commandName = "Управление пользователями";
+    public EditUser(BotService botService, Controller controller, CommandContainer commandContainer) {
+        super(botService, controller, commandContainer);
+        this.commandName = CommandNames.EDIT_USER.getText();
         commandContainer.add(commandName, this);
         userTmp = new User(); // ID ???
         flagRedact = false;
@@ -74,7 +71,7 @@ public class UserRedact extends CommandParent {
 
         if (status.equals("begin")) {
             isFinished = false;
-            sendMessageService.send(chatId, "Введите логин");
+            botService.sendMessage(chatId, "Введите логин", null);
 
 
             statusMap.put(chatId, "Ввод логина");
@@ -90,12 +87,12 @@ public class UserRedact extends CommandParent {
                 }
             }
             if (isUser) {
-                sendMessageService.sendWithKeyboard(chatId, "Пользователь с ником " + userTmp.getLogin() +
+                botService.sendMessage(chatId, "Пользователь с ником " + userTmp.getLogin() +
                         " найден. Вы можете удалить или отредактировать пользователя.", makeButtonsRed());
                 statusMap.put(chatId, "Редактирование");
             }
             if (!isUser) {
-                sendMessageService.sendWithKeyboard(chatId, "Пользователь c ником " + userTmp.getLogin() +
+                botService.sendMessage(chatId, "Пользователь c ником " + userTmp.getLogin() +
                         " не существует. Вы можете добавить пользователя.", makeButtonsAdd());
                 statusMap.put(chatId, "Добавление");
             }
@@ -103,12 +100,12 @@ public class UserRedact extends CommandParent {
         } else if (status.equals("Редактирование")) {
 
             if (input.equals("Редактировать")) {
-                sendMessageService.sendWithKeyboard(chatId, "Что будем редактировать?", makeButtons());
+                botService.sendMessage(chatId, "Что будем редактировать?", makeButtons());
                 statusMap.put(chatId, "Выбор поля");
             }
 
             if (input.equals("Удалить")) {
-                sendMessageService.send(chatId, "Пользователь " + userTmp.getLogin() + " удален");
+                botService.sendMessage(chatId, "Пользователь " + userTmp.getLogin() + " удален", null);
                 //удалить пользователя из БД
                 controller.getUser().delete(userTmp);
 
@@ -119,40 +116,40 @@ public class UserRedact extends CommandParent {
         } else if (status.equals("Выбор поля")) {
             if (input.equals("Роль")) {
                 flagRedact = true;
-                sendMessageService.sendWithKeyboard(chatId, "Выберите роль", makeButtonsRole());
+                botService.sendMessage(chatId, "Выберите роль", makeButtonsRole());
                 statusMap.put(chatId, "Роль");
             }
             if (input.equals("Кампус")) {
                 flagRedact = true;
-                sendMessageService.sendWithKeyboard(chatId, "Выберите кампус", makeButtonsCampus());
+                botService.sendMessage(chatId, "Выберите кампус", makeButtonsCampus());
                 statusMap.put(chatId, "Кампус");
             }
 
         } else if (status.equals("Добавление")) {
 
             if (input.equals("Добавить")) {
-                sendMessageService.send(chatId, "Введите имя пользователя");
+                botService.sendMessage(chatId, "Введите имя пользователя", null);
 
                 statusMap.put(chatId, "Ввод имени");
             }
 
         } else if (status.equals("Ввод имени")) {
             userTmp.setName(input);
-            sendMessageService.sendWithKeyboard(chatId, "Ок, а теперь выберите кампус", makeButtonsCampus());
+            botService.sendMessage(chatId, "Ок, а теперь выберите кампус", makeButtonsCampus());
             statusMap.put(chatId, "Кампус");
 
         } else if (status.equals("Кампус")) {
             userTmp.setCampus(controller.getCampus().findByName(input));
             if (flagRedact){
-                sendMessageService.send(chatId, "Пользователь отредактирован" +'\n'
+                botService.sendMessage(chatId, "Пользователь отредактирован" +'\n'
                         + "логин: " + userTmp.getLogin() + '\n' + "имя: " + userTmp.getName() + '\n'
-                        + "кампус: " + userTmp.getCampus() + '\n' + "роль: " + userTmp.getRole());
+                        + "кампус: " + userTmp.getCampus() + '\n' + "роль: " + userTmp.getRole(), null);
                 controller.getUser().update(userTmp);
                 statusMap.put(chatId, "begin");
                 flagRedact = false;
                 isFinished = true;
             } else {
-                sendMessageService.sendWithKeyboard(chatId, "Осталось выбрать роль", makeButtonsRole());
+                botService.sendMessage(chatId, "Осталось выбрать роль", makeButtonsRole());
                 statusMap.put(chatId, "Роль");
             }
 
@@ -160,21 +157,21 @@ public class UserRedact extends CommandParent {
 
             userTmp.setRole(controller.getRole().findByName(input));
             if (flagRedact) {
-                sendMessageService.send(chatId, "Пользователь отредактирован" +'\n'
+                botService.sendMessage(chatId, "Пользователь отредактирован" +'\n'
                         + "логин: " + userTmp.getLogin() + '\n' + "имя: " + userTmp.getName() + '\n'
-                        + "кампус: " + userTmp.getCampus() + '\n' + "роль: " + userTmp.getRole());
+                        + "кампус: " + userTmp.getCampus() + '\n' + "роль: " + userTmp.getRole(), null);
                 controller.getUser().update(userTmp);
                 flagRedact = false;
             } else {
                 try {
                     userTmp.setTelegramId(chatId);
                     controller.getUser().save(userTmp);
-                    sendMessageService.send(chatId, "Новый пользователь добавлен:"
+                    botService.sendMessage(chatId, "Новый пользователь добавлен:"
                             + '\n' + "логин: " + userTmp.getLogin() + '\n'
                             + "имя: " + userTmp.getName() + '\n' + "кампус: " + userTmp.getCampus() + '\n'
-                            + "роль: " + userTmp.getRole());
+                            + "роль: " + userTmp.getRole(), null);
                 } catch (DataAccessException e) {
-                    sendMessageService.send(chatId, "Не получилось сохранить");
+                    botService.sendMessage(chatId, "Не получилось сохранить", null);
                 }
 
 
