@@ -1,6 +1,3 @@
-/src/main/resources/bot.properties
-/src/main/resources/db.properties
 *.class
 /target
 /.idea/
-src/main/resources/*
