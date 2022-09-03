@@ -1,5 +1,8 @@
-package booking_bot.commands;
+package booking_bot.commands.impls;
 
+import booking_bot.commands.CommandContainer;
+import booking_bot.commands.CommandNames;
+import booking_bot.commands.CommandParent;
 import booking_bot.models.BookObject;
 import booking_bot.repositories.Controller;
 import booking_bot.services.BotService;

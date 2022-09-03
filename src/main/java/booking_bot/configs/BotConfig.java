@@ -2,6 +2,7 @@ package booking_bot.configs;
 
 import booking_bot.Bot;
 import booking_bot.commands.*;
+import booking_bot.commands.impls.*;
 import booking_bot.repositories.Controller;
 import booking_bot.services.BotService;
 import booking_bot.services.BotServiceImpl;
@@ -16,8 +17,12 @@ public class BotConfig {
 
     @Value("${bot.username}")
     private String username;
+
     @Value("${bot.token}")
     private String token;
+
+    @Value("${admin.password}")
+    private String adminPassword;
 
     @Bean
     public BotService sendMessageService (Bot bot) {
@@ -48,7 +53,9 @@ public class BotConfig {
 
     @Bean
     public Command admin(BotService botService, Controller controller, CommandContainer commandContainer) {
-        return new Admin(botService, controller, commandContainer);
+        Admin admin = new Admin(botService, controller, commandContainer);
+        admin.setAdminPassword(adminPassword);
+        return admin;
     }
 
     @Bean

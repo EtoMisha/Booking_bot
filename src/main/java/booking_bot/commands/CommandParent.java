@@ -6,7 +6,6 @@ import booking_bot.services.BotService;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -15,19 +14,16 @@ CommandParent implements Command {
     protected final BotService botService;
     protected final Controller controller;
     protected final CommandContainer commandContainer;
-//    protected Map<Long, String> statusMap;
 
     protected boolean isFinished;
     protected Long chatId;
     protected String input;
-//    protected String status;
 
     public CommandParent(BotService botService, Controller controller, CommandContainer commandContainer) {
         this.botService = botService;
         this.controller = controller;
         this.commandContainer = commandContainer;
         this.isFinished = false;
-//        this.statusMap = new HashMap<>();
     }
 
     protected void prepare(Update update) {
@@ -38,12 +34,6 @@ CommandParent implements Command {
             chatId = update.getMessage().getChatId();
             input = update.getMessage().getText();
         }
-
-//        if (!statusMap.containsKey(chatId)) {
-//            statusMap.put(chatId, "begin");
-//        }
-
-//        status = statusMap.get(chatId);
     }
 
     protected <T> List<String> getNames(List<T> entityList) {

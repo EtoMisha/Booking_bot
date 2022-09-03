@@ -1,5 +1,8 @@
-package booking_bot.commands;
+package booking_bot.commands.impls;
 
+import booking_bot.commands.CommandContainer;
+import booking_bot.commands.CommandNames;
+import booking_bot.commands.CommandParent;
 import booking_bot.models.BookObject;
 import booking_bot.repositories.Controller;
 import booking_bot.services.BotService;
@@ -156,6 +159,10 @@ public class AddObject extends CommandParent {
         }
     }
 
+    private String makeStr(String inputStr){
+        return (inputStr.substring(0,1).toUpperCase() + inputStr.substring(1).toLowerCase());
+    }
+
     private enum Status {
         BEGIN,
         SELECT_CATEGORY,
@@ -163,10 +170,6 @@ public class AddObject extends CommandParent {
         OBJECT_DESCRIPTION,
         SKIP_IMAGE,
         UPLOAD_IMAGE,
-    }
-
-    private String makeStr(String inputStr){
-        return (inputStr.substring(0,1).toUpperCase() + inputStr.substring(1).toLowerCase());
     }
 
     @Override
