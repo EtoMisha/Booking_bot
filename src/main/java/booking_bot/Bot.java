@@ -35,7 +35,8 @@ public class Bot extends TelegramLongPollingBot {
 
     @Override
     public void onUpdateReceived(Update update) {
-
+        System.out.println("[onUpdateReceived] begin");
+        
         Long chatId;
         String input;
 
@@ -46,6 +47,7 @@ public class Bot extends TelegramLongPollingBot {
             chatId = update.getMessage().getChatId();
             input = update.getMessage().getText();
         }
+        System.out.println("[onUpdateReceived] chatId " + chatId);
 
         Command command;
         boolean isFinished;
@@ -57,6 +59,7 @@ public class Bot extends TelegramLongPollingBot {
             command = commandContainer.getCommand(commandMap.get(chatId));
             isFinished = command.execute(update, false);
         }
+        System.out.println("[onUpdateReceived] command finished " + chatId);
 
         if (isFinished) {
             commandMap.remove(chatId);

@@ -25,7 +25,7 @@ public class BotConfig {
     private String adminPassword;
 
     @Bean
-    public BotService sendMessageService (Bot bot) {
+    public BotService botService (Bot bot) {
         return new BotServiceImpl(bot);
     }
 

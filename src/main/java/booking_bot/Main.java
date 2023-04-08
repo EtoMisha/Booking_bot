@@ -14,13 +14,14 @@ public class Main {
     public static void main(String[] args) {
 
         AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(BotConfig.class, DataBaseConfig.class);
-
+        System.out.println("start");
         Bot bot = context.getBean("bot", Bot.class);
-
+        System.out.println("bot bean created");
 
         try {
             TelegramBotsApi botsApi = new TelegramBotsApi(DefaultBotSession.class);
             botsApi.registerBot(bot);
+            System.out.println("bot registered");
 
         } catch (TelegramApiException e) {
             e.printStackTrace();

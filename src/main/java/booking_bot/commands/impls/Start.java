@@ -48,14 +48,24 @@ public class Start extends CommandParent {
     @Override
     public boolean execute(Update update, boolean begin) {
 
-        prepare(update);
-
-        statusMap.putIfAbsent(chatId, Status.BEGIN);
-        if (begin) {
-            statusMap.put(chatId, currentStatus);
+        if (update.hasCallbackQuery()) {
+            chatId = update.getCallbackQuery().getMessage().getChatId();
+            input = update.getCallbackQuery().getData();
+        } else {
+            chatId = update.getMessage().getChatId();
+            input = update.getMessage().getText();
         }
 
-        currentStatus = statusMap.get(chatId);
+        System.out.println("[start : execute] begin chatId " + chatId + " input " + input + " begin " + begin);
+
+//        statusMap.putIfAbsent(chatId, Status.BEGIN);
+        if (begin) {
+            statusMap.put(chatId, Status.BEGIN);
+        }
+
+        currentStatus = begin ? Status.BEGIN : statusMap.get(chatId);
+
+        System.out.println("[start : execute] currentStatus " + currentStatus + " statusMap " + statusMap);
 
         if (currentStatus.equals(Status.BEGIN)) {
             isFinished = false;
@@ -67,14 +77,17 @@ public class Start extends CommandParent {
         } else if (currentStatus.equals(Status.SELECT_CAMPUS)) {
             selectCampus();
         }
+        System.out.println("[start : execute] end");
+
 
         return isFinished;
     }
 
     private void begin() {
+        System.out.println("[start : begin] begin");
         try {
             newUser = controller.getUser().findByTelegram(chatId);
-            SendMessage send = new SendMessage(chatId.toString(), "Привет, "+ newUser.getName());// + ". Что будем бронировать?");
+            SendMessage send = new SendMessage(chatId.toString(), "Привет, " + newUser.getName());
 
             if (newUser.getRole().getName().equals("Студент")) {
                 send.setReplyMarkup(KeyboardMaker.makeStudentKeyboard());
@@ -91,9 +104,13 @@ public class Start extends CommandParent {
             botService.sendMessage(chatId, "Давай зарегистрируем тебя. Введи логин", null);
             statusMap.put(chatId, Status.ENTER_LOGIN);
         }
+        System.out.println("[start : begin] end");
+
     }
 
     private void enterLogin() {
+        System.out.println("[start : enterLogin] begin");
+
         boolean isUserExist = false;
         newUser.setLogin(input.toLowerCase());
         List<User> usersList = controller.getUser().findAll();
@@ -111,15 +128,24 @@ public class Start extends CommandParent {
             botService.sendMessage(chatId, "Введите имя пользователя", null);
             statusMap.put(chatId, Status.ENTER_NAME);
         }
+
+        System.out.println("[start : enterLogin] end");
+
     }
 
     private void enterName() {
+        System.out.println("[start : enterName] begin");
+
         newUser.setName(input);
         botService.sendMessage(chatId, "Ок, а теперь выберите кампус", makeButtonsCampus());
         statusMap.put(chatId, Status.SELECT_CAMPUS);
+        System.out.println("[start : enterName] end");
+
     }
 
     private void selectCampus() {
+        System.out.println("[start : selectCampus] begin");
+
         newUser.setCampus(controller.getCampus().findByName(input));
         newUser.setRole(controller.getRole().findByName("студент"));
         newUser.setTelegramId(chatId);
@@ -134,6 +160,8 @@ public class Start extends CommandParent {
 
         statusMap.put(chatId, Status.BEGIN);
         isFinished = true;
+        System.out.println("[start : selectCampus] end");
+
     }
 
     private enum Status {

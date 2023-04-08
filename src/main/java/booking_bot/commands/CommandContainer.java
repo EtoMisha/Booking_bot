@@ -11,6 +11,8 @@ public class CommandContainer {
     }
 
     public Command getCommand(String commandName) {
+        System.out.println("[getCommand] commandName " + commandName);
+
         return commandMap.get(commandName);
     }
 

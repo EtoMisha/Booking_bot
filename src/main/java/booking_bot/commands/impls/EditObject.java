@@ -8,10 +8,7 @@ import booking_bot.repositories.Controller;
 import booking_bot.services.BotService;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /*
  *   Поля унаследованные от родительского класса:
