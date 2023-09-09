@@ -1,8 +1,6 @@
 package ru.booking.bot.command.impl;
 
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -63,10 +61,10 @@ public class AddObject implements Command {
     private boolean isFinished;
     private BookingObject bookingObject;
 
-    @Value("${bot.start-time}")
+    @Value("${bot.default-start-time}")
     private String defaultAvailabilityStart;
 
-    @Value("${bot.end-time}")
+    @Value("${bot.default-end-time}")
     private String defaultAvailabilityEnd;
 
     @Override
