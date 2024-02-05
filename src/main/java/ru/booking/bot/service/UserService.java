@@ -1,5 +1,6 @@
 package ru.booking.bot.service;
 
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -35,5 +36,16 @@ public class UserService {
         userRepository.save(user);
 
         return user;
+    }
+
+    @PostConstruct
+    private void setAdmins() {
+        List<String> adminUsernamesList = List.of(adminUsernames.split(","));
+        List<User> usersList = (List<User>) userRepository.findAll();
+        for (User user : usersList) {
+            user.setAdmin(adminUsernamesList.contains(user.getUsername()));
+        }
+
+        userRepository.saveAll(usersList);
     }
 }
